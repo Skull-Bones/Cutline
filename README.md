@@ -5,7 +5,7 @@ A food diary and diet tracker in a single HTML file, with a landing page and the
 ## Features
 
 - **Fast logging:** type `chicken breast` and `179`, `6oz`, `1lb`, or a count like `4x`, see the macros, and press Enter.
-- **141 built-in foods:** chicken, beef cuts and ground-beef grades, pork, lamb, bison, venison, fish, eggs, dairy, vegetables, grains, fruit, plus brand items like Fage, Chobani, Oikos, Quest, Premier Protein and Fairlife.
+- **434 built-in foods:** chicken, beef cuts and ground-beef grades, pork, lamb, bison, venison, fish, eggs, dairy, vegetables, grains, fruit, brand items like Fage, Chobani, Oikos, Quest, Premier Protein and Fairlife, and about 290 items from 16 restaurant chains (McDonald's, Chick-fil-A, Whataburger, Chipotle, Starbucks and more), logged by count.
 - **Custom foods:** add anything missing from its nutrition label.
 - **Daily targets:** a calorie target from the Mifflin-St Jeor formula, your activity level and your deficit; protein and net-carb targets for keto or low carb; and an optional protein floor.
 - **Weight tracking:** log your weight and see how many weeks are left to your goal weight.
