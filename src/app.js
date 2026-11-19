@@ -163,7 +163,6 @@
   // ---- Entry editing ----
   var editingId = null;
   function foodByName(n){ var all=(state.customFoods||[]).concat(FOODS); for(var i=0;i<all.length;i++){ if(all[i].n===n) return all[i]; } return null; }
-  function num1(v){ var n=parseFloat(v); return isFinite(n) && n>=0 ? R1(n) : 0; }
   function editFormHTML(e){
     var food=foodByName(e.name), h='<form class="edit-form" data-action="save-edit" data-id="'+esc(e.id)+'" autocomplete="off">';
     h+='<div class="edit-title">Edit '+esc(e.name)+'<\/div>';
@@ -350,24 +349,15 @@
       navigator.clipboard.writeText(json).then(function(){ backupMsg('Downloads aren\'t available here, so the backup was copied. Paste it into a note or file to keep it.'); }, function(){ backupMsg('Couldn\'t save or copy the backup here.', true); });
     } else backupMsg('Couldn\'t save or copy the backup here.', true);
   }
-  function cleanDays(days){
-    var out={};
-    Object.keys(days||{}).forEach(function(d){
-      if(!/^\d{4}-\d{2}-\d{2}$/.test(d) || !Array.isArray(days[d])) return;
-      out[d]=days[d].filter(function(e){ return e && typeof e.name==='string' && isFinite(parseFloat(e.cals)); }).map(function(e){
-        return {id:String(e.id||('e'+Math.random().toString(36).slice(2,10))), name:e.name, portion:String(e.portion||''), cals:num1(e.cals), protein:num1(e.protein), carbs:num1(e.carbs), fiber:num1(e.fiber), fat:num1(e.fat)};
-      });
-    });
-    return out;
-  }
   function readImport(file){
+    if(file.size>5e6){ backupMsg('That file is too big to be a Cutline backup.', true); return; }
     var fr=new FileReader();
     fr.onload=function(){
       try{
         var b=JSON.parse(fr.result), s=b && b.state;
         if(!b || b.app!=='cutline' || !s || !s.profile || typeof s.days!=='object') throw new Error('not a Cutline backup');
-        var days=cleanDays(s.days), n=Object.keys(days).filter(function(d){ return days[d].length; }).length;
-        pendingImport={state:{profile:s.profile, customFoods:Array.isArray(s.customFoods)?s.customFoods:[], weights:(s.weights&&typeof s.weights==='object')?s.weights:{}, flags:s.flags||{}, days:days}, days:n, when:b.exported?prettyDate(String(b.exported).slice(0,10)):'an unknown date'};
+        var clean=cleanState(s), days=clean.days, n=Object.keys(days).filter(function(d){ return days[d].length; }).length, ex=String(b.exported||'').slice(0,10);
+        pendingImport={state:clean, days:n, when:DATE_RE.test(ex)?prettyDate(ex):'an unknown date'};
         render();
       }catch(e){ backupMsg('That file isn\'t a Cutline backup.', true); }
     };
@@ -489,7 +479,7 @@
   // ---- Startup state ----
   var LOCAL_KEY='cutline_v2', LEGACY_LOCAL_KEYS=['cutline_share_v1'];  // must be set before the first readLocal()
   function normalize(){ state.profile=state.profile||{}; state.customFoods=state.customFoods||[]; state.weights=state.weights||{}; state.days=state.days||{}; state.flags=state.flags||{}; }
-  function adopt(s){ if(!s || !s.profile) return false; state.profile=s.profile; state.customFoods=s.customFoods||[]; state.weights=s.weights||{}; state.days=s.days||{}; state.flags=s.flags||{}; normalize(); return true; }
+  function adopt(s){ if(!s || !s.profile) return false; var c=cleanState(s); state.profile=c.profile; state.customFoods=c.customFoods; state.weights=c.weights; state.days=c.days; state.flags=c.flags; return true; }
   normalize();
   (function(){ var loc=readLocal(); if(loc) adopt(loc); })();
   var viewDate = todayStr(), lastToday = viewDate;
@@ -639,7 +629,7 @@
     var chips=m.slice(1,5).map(function(f){ return '<button type="button" class="chip" data-action="pick-food" data-name="'+esc(f.n)+'">'+esc(f.n)+'<\/button>'; }).join('');
     chips = chips ? '<div class="chips">'+chips+'<\/div>' : '';
     if(!aq.trim()){
-      box.innerHTML=head+'<div class="pv-hint">'+(food.per?'One '+food.pc.name:'Per 100g')+': '+R(food.cal)+' kcal &middot; P '+R1(food.p)+'g &middot; net C '+R1(food.c-food.fi)+'g &middot; F '+R1(food.f)+'g.'+pieceNote(food)+' Now enter an amount.<\/div>'+chips;
+      box.innerHTML=head+'<div class="pv-hint">'+(food.per?'One '+esc(food.pc.name):'Per 100g')+': '+R(food.cal)+' kcal &middot; P '+R1(food.p)+'g &middot; net C '+R1(food.c-food.fi)+'g &middot; F '+R1(food.f)+'g.'+pieceNote(food)+' Now enter an amount.<\/div>'+chips;
       return;
     }
     var amt=parseAmount(aq,food);

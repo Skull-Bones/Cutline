@@ -5,6 +5,7 @@
 // Optional: `node tools/build.mjs --seed path/to/state.json --out file.html` builds the personal page
 // with a starting log baked in (used once to move an existing log into account storage).
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -55,7 +56,24 @@ export function page(shell, meta, seed) {
   for (const key of ['{{HEAD_META}}', '{{APP_CSS}}', '{{APP_SCRIPT}}']) {
     if (html.split(key).length !== 2) throw new Error(`${shell} must contain ${key} exactly once`);
   }
-  return html.replace('{{HEAD_META}}', () => META[meta]).replace('{{APP_CSS}}', () => src('app.css')).replace('{{APP_SCRIPT}}', () => appScript(seed));
+  const script = appScript(seed);
+  return html.replace('{{HEAD_META}}', () => (meta === 'pages' ? csp(script) + '\n' : '') + META[meta]).replace('{{APP_CSS}}', () => src('app.css')).replace('{{APP_SCRIPT}}', () => script);
+}
+
+// The public site gets a Content-Security-Policy that only lets the app's own script run (matched by hash),
+// so injected markup can't execute even if a bug let some through. Claude artifacts already run sandboxed
+// and inject their own bridge script, so they don't get this tag.
+// ponytail: GitHub Pages can't send headers, so frame-ancestors (clickjacking) isn't enforceable from a meta tag.
+export function csp(script) {
+  const body = script.match(/<script>([\s\S]*?)<\/script>/)[1];
+  const hash = createHash('sha256').update(body, 'utf8').digest('base64');
+  const policy = [
+    "default-src 'none'", `script-src 'sha256-${hash}'`,
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com", "font-src https://fonts.gstatic.com",
+    "img-src 'self' data: blob:", "connect-src https://world.openfoodfacts.org", "manifest-src 'self'",
+    "base-uri 'none'", "form-action 'none'", "object-src 'none'"
+  ].join('; ');
+  return `<meta http-equiv="Content-Security-Policy" content="${policy}">\n<meta name="referrer" content="no-referrer">`;
 }
 
 const args = process.argv.slice(2);

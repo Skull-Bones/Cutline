@@ -188,6 +188,36 @@ await test('web: export downloads a backup and import restores it after confirmi
   assert.deepEqual(errors, []);
 });
 
+await test('web: a booby-trapped backup imports as plain text and runs nothing; the security policy only allows the app script', async () => {
+  const { page, errors } = await open('index.html');
+  const csp = [];
+  page.on('console', m => { if (/Content Security Policy/i.test(m.text())) csp.push(m.text()); });
+  const bad = '<img src=x onerror="window.__pwned=1">';
+  const backup = JSON.parse(stateWith({ loggedDays: 2 }));
+  backup.profile.heightIn = '"><img src=x onerror="window.__pwned=1">';
+  backup.customFoods = [{ n: 'Trap ' + bad, a: [], cal: 100, p: 10, c: 0, fi: 0, f: 1, pc: { name: bad, g: 50 } }];
+  backup.days[day(-1)][0].name = bad; backup.days[day(-1)][0].portion = bad;
+  const dir = mkdtempSync(join(tmpdir(), 'cutline-')), file = join(dir, 'b.json');
+  writeFileSync(file, JSON.stringify({ app: 'cutline', version: 2, exported: bad, state: backup }));
+  await tabTo(page, 'profile');
+  await page.setInputFiles('#import-file', file); await page.waitForTimeout(150);
+  assert.match(await text(page, '.import-confirm'), /an unknown date/);
+  await page.click('[data-action="import-confirm"]'); await page.waitForTimeout(100);
+  await tabTo(page, 'log'); await page.fill('#f-food', 'trap'); await page.dispatchEvent('#f-food', 'input'); await page.waitForTimeout(50);
+  assert.match(await text(page, '#pv'), /Trap <img/);
+  await tabTo(page, 'food'); await page.click('[data-action="prev-day"]'); await page.waitForTimeout(50);
+  assert.ok((await entries(page)).some(n => n.includes('<img')), 'shown as text');
+  await tabTo(page, 'profile');
+  assert.equal(await page.$('img[src="x"]'), null);
+  assert.equal(await page.evaluate(() => window.__pwned), undefined);
+  // A script injected after load is refused by the policy.
+  await page.evaluate(() => { const s = document.createElement('script'); s.textContent = 'window.__pwned=2'; document.body.appendChild(s); });
+  await page.waitForTimeout(50);
+  assert.equal(await page.evaluate(() => window.__pwned), undefined);
+  assert.ok(csp.length >= 1, 'the policy reported the injected script');
+  assert.deepEqual(errors, []);
+});
+
 await test('web: profile save restarts the countdown; phone layout has no sideways scroll', async () => {
   const { page } = await open('index.html');
   await tabTo(page, 'profile');

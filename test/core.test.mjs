@@ -8,7 +8,7 @@ const code = ['foods.js', 'core.js'].map(f => readFileSync(new URL('../src/' + f
 function load(state) {
   const ctx = { state, console, Math, Date, JSON, Object, Array, String, Number, parseFloat, parseInt, isFinite };
   vm.createContext(ctx);
-  vm.runInContext(code + '\n;this.api={FOODS,findFoods,parseAmount,foodMacros,calcTargets,dayNum,slopePerDay,adaptiveEstimate,clampedAdjust,shiftDate,goalWeeksOf,todayStr};', ctx);
+  vm.runInContext(code + '\n;this.api={FOODS,findFoods,parseAmount,foodMacros,calcTargets,dayNum,slopePerDay,adaptiveEstimate,clampedAdjust,shiftDate,goalWeeksOf,todayStr,cleanState};', ctx);
   return ctx.api;
 }
 let passed = 0;
@@ -108,6 +108,25 @@ test('target check: estimate = intake + 3500 x weekly loss / 7, and needs enough
   const c = api.clampedAdjust(5000, 3000);
   assert.equal(c.clamped, true);
   near(c.value, 3750, 0.01);
+});
+
+test('cleanState keeps real data and strips anything that is not plain text or numbers', () => {
+  const bad = '"><img src=x onerror=alert(1)>';
+  const c = api.cleanState({
+    profile: { ...eric, heightIn: bad, sex: bad, goalStart: bad, extra: 'x' },
+    customFoods: [{ n: 'Tuna', cal: 94.59, p: 22.97, c: 0, fi: 0, f: 0.67, pc: { name: bad, g: 74 } }, { n: 5 }, null],
+    weights: { '2026-11-19': '198', __proto__x: 1, '2026-11-18': bad },
+    flags: { milestone14: '2026-11-19', admin: true },
+    days: { '2026-11-19': [{ id: 'a', name: 'Eggs', portion: '4', cals: '286', protein: 25.2, carbs: 1.4, fat: 19 }, { name: 'no cals' }], 'not-a-date': [] }
+  });
+  assert.equal(c.profile.heightIn, undefined); assert.equal(c.profile.sex, ''); assert.equal(c.profile.goalStart, undefined);
+  assert.equal(c.profile.extra, undefined); assert.equal(c.profile.weightLb, 198); assert.equal(c.profile.proteinFloorEnabled, true);
+  assert.equal(c.customFoods.length, 1); assert.equal(c.customFoods[0].cal, 94.59); assert.equal(c.customFoods[0].pc.g, 74);
+  assert.ok(c.customFoods[0].pc.name.length <= 30);
+  assert.deepEqual(JSON.parse(JSON.stringify(c.weights)), { '2026-11-19': 198 });
+  assert.deepEqual(JSON.parse(JSON.stringify(c.flags)), { milestone14: '2026-11-19' });
+  assert.deepEqual(Object.keys(c.days), ['2026-11-19']); assert.equal(c.days['2026-11-19'].length, 1);
+  assert.equal(c.days['2026-11-19'][0].cals, 286); assert.equal(c.days['2026-11-19'][0].fiber, 0);
 });
 
 console.log(`\n${passed} tests passed`);

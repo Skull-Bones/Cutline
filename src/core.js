@@ -121,7 +121,45 @@
     return {g:n, label:R1(n)+'g'};
   }
 
-  function pieceNote(f){ if(!f.pc || f.per) return ''; var k=f.pc.g/100; return ' One '+f.pc.name+' ('+R(f.pc.g)+'g): '+R(f.cal*k)+' kcal, P '+R1(f.p*k)+'g.'; }
+  function pieceNote(f){ if(!f.pc || f.per) return ''; var k=f.pc.g/100; return ' One '+esc(f.pc.name)+' ('+R(f.pc.g)+'g): '+R(f.cal*k)+' kcal, P '+R1(f.p*k)+'g.'; }
+
+  // Every way a log gets in (this browser, the Claude account, an imported backup) runs through cleanState,
+  // so a tampered file can only ever supply plain text and numbers, never markup or unexpected fields.
+  var DATE_RE=/^\d{4}-\d{2}-\d{2}$/;
+  function pos(v){ var n=parseFloat(v); return isFinite(n) && n>=0 ? n : 0; }
+  function num1(v){ return R1(pos(v)); }
+  function str(v,max){ return String(v==null?'':v).slice(0,max||120); }
+  function cleanDays(days){
+    var out={};
+    Object.keys(days||{}).forEach(function(d){
+      if(!DATE_RE.test(d) || !Array.isArray(days[d])) return;
+      out[d]=days[d].filter(function(e){ return e && typeof e.name==='string' && isFinite(parseFloat(e.cals)); }).map(function(e){
+        return {id:str(e.id||('e'+Math.random().toString(36).slice(2,10)),40), name:str(e.name), portion:str(e.portion,60), cals:pos(e.cals), protein:pos(e.protein), carbs:pos(e.carbs), fiber:pos(e.fiber), fat:pos(e.fat)};
+      });
+    });
+    return out;
+  }
+  var PROFILE_NUMS=['age','heightIn','weightLb','goalWeightLb','activity','deficit','proteinFloorG','netCarbLimit','goalWeeks','tdeeAdjust'];
+  function cleanProfile(p){
+    p=p||{}; var o={sex:p.sex==='male'||p.sex==='female'?p.sex:'', dietMode:p.dietMode==='keto'?'keto':'lowcarb', proteinFloorEnabled:p.proteinFloorEnabled===true};
+    PROFILE_NUMS.forEach(function(k){ var n=parseFloat(p[k]); if(isFinite(n)) o[k]=n; });
+    if(o.age!=null) o.age=Math.round(o.age);
+    ['goalStart','tdeeAdjustDate'].forEach(function(k){ if(DATE_RE.test(p[k])) o[k]=p[k]; });
+    return o;
+  }
+  function cleanFood(f){
+    if(!f || typeof f.n!=='string' || !f.n.trim()) return null;
+    var o={n:str(f.n), a:(Array.isArray(f.a)?f.a:[]).filter(function(x){ return typeof x==='string'; }).map(function(x){ return str(x,60); }), pc:null};
+    ['cal','p','c','fi','f'].forEach(function(k){ o[k]=pos(f[k]); });
+    if(f.pc && parseFloat(f.pc.g)>0) o.pc={name:str(f.pc.name||'serving',30), g:parseFloat(f.pc.g)};
+    return o;
+  }
+  function cleanState(s){
+    s=s||{}; var w={}, flags={};
+    Object.keys(s.weights||{}).forEach(function(d){ var v=parseFloat(s.weights[d]); if(DATE_RE.test(d) && v>=50 && v<=1000) w[d]=R1(v); });
+    if(s.flags && DATE_RE.test(s.flags.milestone14)) flags.milestone14=s.flags.milestone14;
+    return {profile:cleanProfile(s.profile), customFoods:(Array.isArray(s.customFoods)?s.customFoods:[]).map(cleanFood).filter(Boolean), weights:w, flags:flags, days:cleanDays(s.days)};
+  }
 
   function foodMacros(food,grams){
     var k=grams/100;

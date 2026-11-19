@@ -2,7 +2,7 @@
 
 A food diary and diet tracker in a single HTML page: a landing page with the tracker built in. Type a food and an amount, check the calories and macros, then press Enter to log it.
 
-**Live:** https://skull-bones.github.io/Cutline/ (once GitHub Pages is on)
+**Live:** https://skull-bones.github.io/Cutline/
 
 ## Features
 
@@ -20,6 +20,14 @@ A food diary and diet tracker in a single HTML page: a landing page with the tra
 - **Inside Claude:** in your own Claude account (a private per-person store), with the browser as a backup. A save writes only a small summary and the month that changed.
 
 No data is sent anywhere else. Barcode lookups send only the barcode number to Open Food Facts. Fonts load from Google Fonts.
+
+## Security
+
+- **No server, no accounts, no secrets.** Cutline is static files. There is no backend to break into and nothing secret in the repo.
+- **Everything loaded is checked.** Data from the browser, the Claude account or an imported backup is rebuilt field by field into plain text and numbers before use. Anything else is dropped, and every name is escaped before display.
+- **Locked-down web page.** The GitHub Pages site carries a Content-Security-Policy. Only the app's own script can run (matched by its hash). The page can contact only Open Food Facts, and loads styles and fonts only from itself and Google Fonts. It sends no referrer.
+- **Claude copies:** each person's log lives under their own user ID in the artifact's database, which other viewers can't read. Whoever can edit the artifact could publish different code, so open a shared copy only from someone you trust, or use the GitHub version.
+- Found a problem? Open an issue.
 
 ## Nutrition data
 
