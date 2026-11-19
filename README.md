@@ -7,7 +7,7 @@ A food diary and diet tracker in a single HTML page: a landing page with the tra
 ## Features
 
 - **Fast logging:** type `chicken breast` and `179`, `6oz`, `1lb`, or a count like `4x`, see the macros, and press Enter. Any entry can be edited later.
-- **434 built-in foods:** chicken, beef cuts and ground-beef grades, pork, lamb, bison, venison, fish, eggs, dairy, vegetables, grains, fruit; brand items like Fage, Chobani, Oikos, Quest, Premier Protein and Fairlife; and about 290 items from 16 restaurant chains, logged by count.
+- **7,800+ built-in foods:** about 7,400 generic foods from USDA FoodData Central (SR Legacy and Foundation Foods), plus a hand-picked set of chicken, beef cuts and ground-beef grades, pork, lamb, bison, venison, fish, eggs, dairy, vegetables, grains, fruit; brand items like Fage, Chobani, Oikos, Quest, Premier Protein and Fairlife; and about 290 items from 16 restaurant chains, logged by count.
 - **Custom foods:** add anything from its label. On the web, scan or type a barcode to look it up in Open Food Facts. Inside Claude, photograph the nutrition label and Claude reads it.
 - **Goal timeline:** set current weight, goal weight and a 6 to 26 week timeline. Cutline works out the daily deficit, then recalculates it as you go.
 - **Daily weigh-in and trend chart.**
@@ -31,7 +31,7 @@ No data is sent anywhere else. Barcode lookups send only the barcode number to O
 
 ## Nutrition data
 
-Generic foods use USDA values per 100g, weighed cooked unless the name says raw. Brand items use the label for one serving. Restaurant items use each chain's published numbers for one item; where a chain doesn't publish fiber, it counts as 0, so net carbs can read slightly high, never low. Barcode results come from Open Food Facts, which is crowd-sourced. Recipes change, so check your package.
+Generic foods use USDA FoodData Central values per 100g (SR Legacy, April 2018, and Foundation Foods), for the food as named, raw or cooked. To refresh them, download the CSV releases from fdc.nal.usda.gov and run `python3 tools/usda_import.py <sr_legacy_dir> <foundation_dir>`. Where USDA lists no fiber, it counts as 0. Brand items use the label for one serving. Restaurant items use each chain's published numbers for one item; where a chain doesn't publish fiber, it counts as 0, so net carbs can read slightly high, never low. Barcode results come from Open Food Facts, which is crowd-sourced. Recipes change, so check your package.
 
 Cutline is not affiliated with any restaurant or brand listed. It is not medical advice.
 

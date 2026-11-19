@@ -48,7 +48,13 @@
   }
 
   // ---- Personalization from the log ----
-  function resolvedName(e){ var m=findFoods(e.name)[0]; return m ? m.n : e.name; }
+  // Older entries may use names that aren't in the catalog verbatim; resolve each distinct name once per render.
+  var resolveCache=new Map();
+  function resolvedName(e){
+    if(resolveCache.has(e.name)) return resolveCache.get(e.name);
+    var r=e.name; if(!foodByName(r)){ var m=findFoods(r)[0]; if(m) r=m.n; }
+    resolveCache.set(e.name, r); return r;
+  }
   function allEntries(){
     var out=[];
     Object.keys(state.days).sort().forEach(function(d){ (state.days[d]||[]).forEach(function(e){ out.push(e); }); });
@@ -162,7 +168,6 @@
   }
   // ---- Entry editing ----
   var editingId = null;
-  function foodByName(n){ var all=(state.customFoods||[]).concat(FOODS); for(var i=0;i<all.length;i++){ if(all[i].n===n) return all[i]; } return null; }
   function editFormHTML(e){
     var food=foodByName(e.name), h='<form class="edit-form" data-action="save-edit" data-id="'+esc(e.id)+'" autocomplete="off">';
     h+='<div class="edit-title">Edit '+esc(e.name)+'<\/div>';
@@ -471,7 +476,7 @@
     }
 
     html += '<\/div>';
-    html += '<div class="foot-note">Targets use the Mifflin-St Jeor formula. Food values are typical averages per 100g, cooked weight unless the name says raw. Brand items use the label for one serving. Recipes change, so check your package, and use a custom food for anything missing. Restaurant items use each chain&rsquo;s published numbers for one item, so log them by count. Fiber counts as 0 where a chain does not list it. Your log is private to you: it saves to your Claude account when you are signed in, and to this browser otherwise.<\/div>';
+    html += '<div class="foot-note">Targets use the Mifflin-St Jeor formula. Food values are per 100g from USDA FoodData Central, for the food as named (raw or cooked). Where USDA lists no fiber it counts as 0. Brand items use the label for one serving. Recipes change, so check your package, and use a custom food for anything missing. Restaurant items use each chain&rsquo;s published numbers for one item, so log them by count. Fiber counts as 0 where a chain does not list it. Your log is private to you: it saves to your Claude account when you are signed in, and to this browser otherwise.<\/div>';
 
     return html;
   }
@@ -646,6 +651,7 @@
   }
 
   function render(){
+    resolveCache.clear();
     $('app-root').innerHTML = renderApp(state, viewDate);
     var sd=$('s-date'); if(sd) sd.textContent=new Date().toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
     updatePreview();

@@ -19,7 +19,7 @@ export const BLANK_STATE = {
 };
 
 const SITE_URL = 'https://skull-bones.github.io/Cutline/';
-const DESCRIPTION = 'A food diary for cutting weight and building muscle. Type a food and an amount, see calories and macros, then log it. 434 foods, keto and low-carb targets, weight tracking.';
+const DESCRIPTION = 'A food diary for cutting weight and building muscle. Type a food and an amount, see calories and macros, then log it. 7,800+ foods, keto and low-carb targets, weight tracking.';
 const FAVICON = "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect width="24" height="24" rx="5" fill="#000"/><circle cx="12" cy="12" r="8" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M6.5 16.5L17.5 7.5" stroke="#E5383B" stroke-width="2.2" stroke-linecap="round"/></svg>');
 
 const META = {
@@ -45,7 +45,7 @@ const META = {
 };
 
 export function appScript(seed) {
-  const js = [src('foods.js'), src('core.js'), src('app.js')].join('\n');
+  const js = [src('foods.js'), src('usda.js'), src('core.js'), src('app.js')].join('\n');
   if (/<\/script/i.test(js)) throw new Error('A literal closing script tag in the app code would end the inline script early.');
   const seedJSON = JSON.stringify(seed).replace(/</g, '\\u003c');
   return `<script id="state-data" type="application/json">${seedJSON}</script>\n<script>\n(function(){\n  var state = JSON.parse(document.getElementById('state-data').textContent);\n${js}\n})();\n</script>`;

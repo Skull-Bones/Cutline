@@ -92,13 +92,15 @@
 
   // Food lookup: every word typed must appear in the name or an alias (plural-tolerant). Exact alias match ranks first.
   function NORM(s){ return (s||'').toLowerCase().replace(/['’]/g,'').replace(/-/g,' ').replace(/[àáâ]/g,'a').replace(/[èéê]/g,'e').replace(/[íì]/g,'i').replace(/ñ/g,'n').replace(/ç/g,'c').trim(); }
+  // Normalized names are worked out once per food (about 7,900 of them), not on every keystroke.
+  var normCache=new WeakMap();
+  function normNames(f){ var c=normCache.get(f); if(!c){ var names=[f.n].concat(f.a||[]).map(NORM); c={names:names, hay:names.join(' | ')}; normCache.set(f,c); } return c; }
   function findFoods(q){
     q=NORM(q);
     if(!q) return [];
     var toks=q.split(/[\s,]+/).filter(Boolean), out=[];
     (state.customFoods||[]).concat(FOODS).forEach(function(f){
-      var names=[f.n].concat(f.a||[]).map(NORM);
-      var hay=names.join(' | ');
+      var c=normNames(f), names=c.names, hay=c.hay;
       var ok=toks.every(function(t){ return hay.indexOf(t)>-1 || hay.indexOf(t.replace(/(es|s)$/,''))>-1; });
       if(!ok) return;
       var score = names.indexOf(q)>-1 ? 0 : names.some(function(n){return n.indexOf(q)===0;}) ? 1 : 2;
@@ -159,6 +161,14 @@
     Object.keys(s.weights||{}).forEach(function(d){ var v=parseFloat(s.weights[d]); if(DATE_RE.test(d) && v>=50 && v<=1000) w[d]=R1(v); });
     if(s.flags && DATE_RE.test(s.flags.milestone14)) flags.milestone14=s.flags.milestone14;
     return {profile:cleanProfile(s.profile), customFoods:(Array.isArray(s.customFoods)?s.customFoods:[]).map(cleanFood).filter(Boolean), weights:w, flags:flags, days:cleanDays(s.days)};
+  }
+
+  // Exact-name lookup for logged entries. Catalog names are indexed once; custom foods are checked first.
+  var nameIndex=null;
+  function foodByName(n){
+    var cf=state.customFoods||[]; for(var i=0;i<cf.length;i++){ if(cf[i].n===n) return cf[i]; }
+    if(!nameIndex){ nameIndex=new Map(); FOODS.forEach(function(f){ if(!nameIndex.has(f.n)) nameIndex.set(f.n,f); }); }
+    return nameIndex.get(n)||null;
   }
 
   function foodMacros(food,grams){

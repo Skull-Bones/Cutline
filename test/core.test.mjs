@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 import assert from 'node:assert/strict';
 
-const code = ['foods.js', 'core.js'].map(f => readFileSync(new URL('../src/' + f, import.meta.url), 'utf8')).join('\n');
+const code = ['foods.js', 'usda.js', 'core.js'].map(f => readFileSync(new URL('../src/' + f, import.meta.url), 'utf8')).join('\n');
 function load(state) {
   const ctx = { state, console, Math, Date, JSON, Object, Array, String, Number, parseFloat, parseInt, isFinite };
   vm.createContext(ctx);
@@ -19,9 +19,9 @@ const eric = { sex: 'male', age: 28, heightIn: 72, weightLb: 198, goalWeightLb: 
                proteinFloorEnabled: true, proteinFloorG: 200, goalWeeks: 8, goalStart: '2026-11-19' };
 const api = load({ profile: eric, customFoods: [], days: {}, weights: {} });
 
-test('catalog has 434 foods with unique names and sane energy', () => {
-  assert.equal(api.FOODS.length, 434);
-  assert.equal(new Set(api.FOODS.map(f => f.n)).size, 434);
+test('catalog has 434 hand-picked + 7,450 USDA foods with unique names and sane energy', () => {
+  assert.equal(api.FOODS.length, 434 + 7450);
+  assert.equal(new Set(api.FOODS.map(f => f.n)).size, api.FOODS.length);
   for (const f of api.FOODS) {
     for (const k of ['cal', 'p', 'c', 'fi', 'f']) assert.ok(isFinite(f[k]) && f[k] >= 0, `${f.n} ${k}`);
     assert.ok(f.fi <= f.c + 1e-9 || f.fi === 0 || f.n.includes('Carb Balance') || f.n.includes('Quest'), `${f.n} fiber above carbs`);
