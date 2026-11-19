@@ -87,6 +87,11 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
   .s-panel{padding:14px;border-radius:18px;margin-inline:-4px}
   .s-cats div{grid-template-columns:1fr;gap:4px}
 }
+:root,:root:not([data-theme]),:root:not([data-theme="light"]),:root[data-theme="dark"],:root[data-theme="light"]{--s-bg:#000000;--s-panel:#000000;--s-ink:#FFFFFF;--s-muted:#A3A3A3;--s-line:rgba(255,255,255,.28);--s-clay:#E5383B;--s-band:#FFFFFF;--s-band-text:#000000;--s-band-muted:#4A4A4A;color-scheme:dark}
+.s-tries code{border:1px solid rgba(255,255,255,.35)}
+.s-step{border-top-color:#fff}
+.s-facts div+div{border-left-color:var(--s-line)}
+.s-head{border-bottom-color:var(--s-line)}
 </style>
 </head><body><title>Cutline Food Tracker</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&family=IBM+Plex+Mono:wght@500;600&display=swap"><header class="s-head"><div class="s-wrap">
 <a class="s-logo" href="#top"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5 17.5L19 6.5" stroke="var(--s-clay)" stroke-width="2.2" stroke-linecap="round"/></svg>Cutline</a>
@@ -106,7 +111,7 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
 <section class="s-sec" id="tracker"><div class="s-wrap s-tracker">
 <div class="s-aside">
 <h2>Your log</h2>
-<p class="s-lede">Set your targets once under Settings, then log as you eat. The preview shows what each food does to your day before anything is saved.</p>
+<p class="s-lede">Set your targets once under Profile &amp; targets, then log as you eat. The preview shows what each food does to your day before anything is saved.</p>
 <ul class="s-tries">
 <li><code>chicken breast</code><code>179</code></li>
 <li><code>eggs</code><code>4x</code></li>
@@ -267,6 +272,8 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
     '@media(max-width:420px){.field-grid,.addform{grid-template-columns:1fr}.addform.logform{grid-template-columns:1fr 104px}.pv-cell .v{font-size:16px}.stat .num{font-size:36px}}';
 
   CSS += "#app-root .weeks-row{display:flex;align-items:center;gap:12px}#app-root .weeks-row input[type=range]{flex:1;width:auto;min-width:0;accent-color:var(--accent);height:28px;padding:0;background:none;border:none}#app-root .weeks-val{font-family:\"IBM Plex Mono\",ui-monospace,monospace;font-weight:600;font-size:14px;min-width:78px;text-align:right;color:var(--text)}#app-root .weeks-scale{display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted)}#app-root .targets-out p{margin:0 0 8px}#app-root .targets-out p:last-child{margin-bottom:0}#app-root .plan-warn{color:var(--warn);background:var(--warn-bg);border-radius:8px;padding:8px 10px}#app-root .plan-warn b{color:var(--warn)}#app-root .plan-fine{font-size:11.5px}#app-root .prof-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:14px;flex-wrap:wrap}#app-root .prof-status{margin-right:auto;font-size:12.5px;color:var(--text-muted)}#app-root .btn-save{background:var(--ink);color:var(--ink-text);border:none;border-radius:999px;padding:10px 18px;font-size:14px;font-weight:600;cursor:pointer}#app-root .btn-ghost{background:none;border:1px solid var(--border);color:var(--text);border-radius:999px;padding:9px 16px;font-size:14px;cursor:pointer}#app-root .btn-save:disabled,#app-root .btn-ghost:disabled{opacity:.4;cursor:default}#app-root .btn-save:focus-visible,#app-root .btn-ghost:focus-visible{outline:2px solid var(--accent);outline-offset:2px}";
+
+  CSS += ":root,:root:not([data-theme]),:root:not([data-theme=\"light\"]),:root[data-theme=\"dark\"],:root[data-theme=\"light\"]{--bg:#000000;--surface:#000000;--surface-2:#141414;--text:#FFFFFF;--text-muted:#A3A3A3;--accent:#E5383B;--accent-ink:#FFFFFF;--ink:#FFFFFF;--ink-text:#000000;--accent-2:#4CBB17;--border:#FFFFFF;--warn:#FF5A5C;--warn-bg:#2B0B0C;--good:#4CBB17;--good-bg:#0E2306;--s-clay:#E5383B;color-scheme:dark}body{background:#000;color:#fff}#app-root .bar{background:#262626}#app-root .bar>i{background:var(--accent)}#app-root .bar>i.good{background:var(--good)}#app-root .card,#app-root .entry,#app-root .hrow,#app-root .chip,#app-root .pv,#app-root .cfitem{background:#000;border-color:var(--border)}#app-root .field input,#app-root .field select{background:#000;border:1px solid var(--border);color:#fff}#app-root .field input:disabled{opacity:.45}#app-root .hero{border-bottom-color:var(--border)}#app-root .targets-out{border-top-color:rgba(255,255,255,.35)}#app-root .entry .del:hover{background:var(--warn-bg);color:var(--warn)}.s-panel{background:transparent;border:none;padding:0;border-radius:0}.tabs{display:flex;flex-wrap:wrap;gap:8px;scrollbar-width:none;position:sticky;top:64px;z-index:5;background:#000;padding:12px 0 14px;margin:0 0 6px}.tabs::-webkit-scrollbar{display:none}.tab{flex:none;background:#000;border:1px solid #fff;color:#fff;border-radius:999px;padding:8px 16px;font:500 14px/1 \"DM Sans\",system-ui,sans-serif;cursor:pointer}.tab:hover{background:#1a1a1a}.tab.on{background:#fff;color:#000}.tab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}@media (max-width:640px){.tabs{flex-wrap:nowrap;overflow-x:auto}}#app-root input[type=checkbox]{accent-color:var(--accent)}";
 
   // Per 100g. Cooked weight unless the name says raw. F(name, aliases, kcal, protein, carbs, fiber, fat, [pieceName, pieceGrams])
   // S(...) takes label values for one serving and converts them to per 100g, so "1" or "1x" logs one serving.
@@ -685,12 +692,15 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
   function meterRow(name,unit,val,target,floorType){
     var pct = target>0 ? Math.min(100,(val/target)*100) : 0;
     var over = target>0 && val>target;
-    var cls = floorType ? (val>=target?'good':'') : (over?'warn':'');
-    var valCls = floorType ? (val>=target?'good':'') : (over?'warn':'');
+    var reached = target>0 && val>=target;
+    var cls = reached?'good':'';
+    var valCls = floorType ? (reached?'good':'') : (over?'warn':(reached?'good':''));
     return '<div class="meter-row"><div class="meter-top"><span class="name">'+esc(name)+'<\/span><span class="val '+valCls+'">'+R(val)+' / '+R(target)+unit+'<\/span><\/div>' +
       '<div class="bar"><i class="'+cls+'" style="width:'+pct+'%"><\/i><\/div><\/div>';
   }
 
+  var tab='log', TABS=[['log','Log food'],['totals','Today\'s totals'],['food','Food log'],['history','Your log so far'],['profile','Profile & targets']];
+  function tabsHTML(){ return '<nav class="tabs" role="tablist" aria-label="Sections">'+TABS.map(function(x){ var on=tab===x[0]; return '<button type="button" role="tab" class="tab'+(on?' on':'')+'" aria-selected="'+on+'" data-action="tab" data-tab="'+x[0]+'">'+esc(x[1])+'<\/button>'; }).join('')+'<\/nav>'; }
   var openState = {'cf-wrap':false,'prof-wrap':true};
   document.addEventListener('toggle', function(ev){ if(ev.target && ev.target.id in openState) openState[ev.target.id]=ev.target.open; }, true);
 
@@ -706,6 +716,8 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
     var usual = usualFoods();
 
     var html = '';
+    html += tabsHTML();
+    if(tab==='log' || tab==='totals' || tab==='food'){
     html += '<div class="hero">';
     html += '<div class="hero-top"><span class="brand">Cutline<\/span>' +
       '<div class="daynav"><button data-action="prev-day" aria-label="Previous day">&#8249;<\/button>' +
@@ -719,7 +731,9 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
     }
     html += '<div class="sub">Target '+N(t.calorieTarget)+' kcal &middot; eaten '+N(totals.cals)+' kcal' + (missing.length?' &middot; estimated, add your '+missing.join(' &amp; ')+' below for a precise number':'') + '<\/div>';
     html += '<\/div>';
+    }
 
+    if(tab==='log'){
     html += '<section><h2>Log food<\/h2><div class="card"><form class="addform logform" data-action="add-entry" autocomplete="off">' +
       '<div class="field"><label for="f-food">Food<\/label><input id="f-food" type="text" placeholder="chicken breast" autocomplete="off" autocapitalize="off" spellcheck="false"><\/div>' +
       '<div class="field"><label for="f-amt">Amount<\/label><input id="f-amt" type="text" inputmode="text" placeholder="179 or 6oz" autocomplete="off" autocapitalize="off" spellcheck="false"><\/div>';
@@ -750,6 +764,8 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
     }
     html += '<\/details><\/div><\/section>';
 
+    }
+    if(tab==='totals'){
     html += '<section><h2>'+(viewDate===todayStr()?'Today\'s totals':esc(prettyDate(viewDate))+' totals')+'<\/h2><div class="card meters">';
     html += meterRow('Protein','g',totals.protein,t.proteinG,true);
     html += meterRow('Calories',' kcal',totals.cals,t.calorieTarget,false);
@@ -757,6 +773,8 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
     html += meterRow('Fat','g',totals.fat,t.fatG,false);
     html += '<\/div><\/section>';
 
+    }
+    if(tab==='food'){
     html += '<section><h2>Food log<\/h2><div class="entries">';
     if(entries.length===0){
       html += '<div class="empty card">Nothing logged for this day yet.<\/div>';
@@ -771,11 +789,16 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
     }
     html += '<\/div><\/section>';
 
+    }
+    if(tab==='history'){
     html += '<section><h2>Your log so far<\/h2><div class="card"><div class="insights">'+insightsHTML(t)+'<\/div>'+historyHTML(t, viewDate)+'<\/div><\/section>';
 
-    html += '<section><details id="prof-wrap" class="card"'+(openState['prof-wrap']?' open':'')+'><summary>Profile &amp; targets <span class="chev">&#8250;<\/span><\/summary>';
+    }
+    if(tab==='profile'){
+    html += '<section><h2>Profile &amp; targets<\/h2><div class="card">';
     html += profileHTML();
-    html += '<\/details><\/section>';
+    html += '<\/div><\/section>';
+    }
 
     html += '<div class="foot-note">Targets use the Mifflin-St Jeor formula. Food values are typical averages per 100g, cooked weight unless the name says raw. Brand items use the label for one serving. Recipes change, so check your package, and use a custom food for anything missing. Restaurant items use each chain&rsquo;s published numbers for one item, so log them by count. Fiber counts as 0 where a chain does not list it. Your log is private to you: it saves to your Claude account when you are signed in, and to this browser otherwise.<\/div>';
 
@@ -891,6 +914,7 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
     var t = ev.target.closest('[data-action]');
     if(!t) return;
     var action = t.getAttribute('data-action');
+    if(action==='tab'){ tab=t.getAttribute('data-tab')||'log'; render(); window.scrollTo(0,0); return; }
     if(action==='save-profile'){
       if(!draft) return;
       var oldW=state.profile.weightLb;
@@ -904,7 +928,7 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
     if(action==='discard-profile'){ draft=null; render(); return; }
     if(action==='prev-day'){ viewDate = shiftDate(viewDate,-1); if(!state.days[viewDate]) state.days[viewDate]=[]; render(); }
     else if(action==='next-day'){ viewDate = shiftDate(viewDate,1); if(!state.days[viewDate]) state.days[viewDate]=[]; render(); }
-    else if(action==='goto-day'){
+    else if(action==='goto-day'){ tab='food';
       viewDate = t.getAttribute('data-date');
       if(!state.days[viewDate]) state.days[viewDate]=[];
       render();
