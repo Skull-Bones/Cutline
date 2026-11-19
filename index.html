@@ -1,4 +1,23 @@
-<!DOCTYPE html><html><head><meta charset="utf8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,-apple-system,sans-serif;background:#fafafa}img{max-width:100%}[hidden]{display:none!important}</style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Cutline Food Tracker</title>
+<meta name="description" content="A food diary for cutting weight and building muscle. Type a food and an amount, see calories and macros, then log it. 434 foods, keto and low-carb targets, weight tracking.">
+<meta name="theme-color" content="#000000">
+<link rel="canonical" href="https://skull-bones.github.io/Cutline/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Cutline Food Tracker">
+<meta property="og:description" content="A food diary for cutting weight and building muscle. Type a food and an amount, see calories and macros, then log it. 434 foods, keto and low-carb targets, weight tracking.">
+<meta property="og:url" content="https://skull-bones.github.io/Cutline/">
+<meta property="og:image" content="https://skull-bones.github.io/Cutline/icons/icon-512.png">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Crect%20width%3D%2224%22%20height%3D%2224%22%20rx%3D%225%22%20fill%3D%22%23000%22%2F%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%228%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.8%22%2F%3E%3Cpath%20d%3D%22M6.5%2016.5L17.5%207.5%22%20stroke%3D%22%23E5383B%22%20stroke-width%3D%222.2%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>:root{color-scheme:dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,-apple-system,sans-serif;background:#000;color:#fff}img{max-width:100%}[hidden]{display:none!important}</style>
 <style id="site-style">
 :root{
   --s-bg:#FAF9F5; --s-panel:#F0EEE6; --s-ink:#141413; --s-muted:#5E5D59; --s-line:#E6E3DA; --s-clay:#C96442;
@@ -93,7 +112,200 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
 .s-facts div+div{border-left-color:var(--s-line)}
 .s-head{border-bottom-color:var(--s-line)}
 </style>
-</head><body><title>Cutline Food Tracker</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&family=IBM+Plex+Mono:wght@500;600&display=swap"><header class="s-head"><div class="s-wrap">
+<style id="app-style">
+/* Cutline app styles. Single dark theme: black, white text and outlines, red until a goal is reached, Kelly green after. */
+:root{--bg:#000000;--surface:#000000;--surface-2:#141414;--text:#FFFFFF;--text-muted:#A3A3A3;--accent:#E5383B;--accent-ink:#FFFFFF;--ink:#FFFFFF;--ink-text:#000000;--accent-2:#4CBB17;--border:#FFFFFF;--warn:#FF5A5C;--warn-bg:#2B0B0C;--good:#4CBB17;--good-bg:#0E2306;--s-clay:#E5383B;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--text)}
+#app-root{font-family:"DM Sans",system-ui,sans-serif;min-width:0}
+.hero{padding-block:14px 14px;border-bottom:1px solid var(--border);margin-bottom:18px;display:flex;flex-direction:column;gap:12px}
+.hero-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.hero .brand{display:none}
+.x-brand{font-family:"DM Sans",system-ui,sans-serif;font-weight:600;font-size:19px;letter-spacing:.2px}
+.daynav{display:flex;align-items:center;gap:10px}
+.daynav button{background:var(--surface-2);border:1px solid var(--border);color:var(--text);width:30px;height:30px;border-radius:8px;font-size:15px;cursor:pointer;line-height:1}
+.daynav button:active{transform:translateY(1px)}
+.daylabel{font-size:13px;color:var(--text-muted);min-width:84px;text-align:center;font-variant-numeric:tabular-nums}
+.stats{display:flex;gap:28px;flex-wrap:wrap;align-items:flex-end}
+.stat{display:flex;flex-direction:column;gap:4px}
+.stat .num{font-family:"DM Sans",system-ui,sans-serif;font-weight:500;font-size:44px;letter-spacing:-1.2px;line-height:1;font-variant-numeric:tabular-nums}
+.stat .num.over{color:var(--warn)}
+.stat .num.good{color:var(--good)}
+.stat .unit{font-size:12px;color:var(--text-muted)}
+.hero .sub{font-size:12px;color:var(--text-muted);line-height:1.55}
+.hero .sub b{color:var(--text);font-weight:600}
+#app-root section{margin-bottom:22px}
+#app-root h2{font-family:"DM Sans",system-ui,sans-serif;font-weight:500;font-size:12px;margin:0 0 10px;text-transform:uppercase;letter-spacing:.9px;color:var(--text-muted)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px}
+details.card summary{cursor:pointer;font-family:"DM Sans",system-ui,sans-serif;font-weight:500;font-size:16px;list-style:none;display:flex;justify-content:space-between;align-items:center}
+details.card summary::-webkit-details-marker{display:none}
+details.card summary .chev{color:var(--text-muted);transition:transform .15s}
+details.card[open] summary .chev{transform:rotate(90deg)}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px;margin-top:14px}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field input:not([type=checkbox]){width:100%}
+.field.full{grid-column:1/-1}
+.field label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px}
+.checkrow{flex-direction:row;align-items:center}
+.checklabel{display:flex;align-items:center;gap:8px;font-size:12.5px;text-transform:none;letter-spacing:0;color:var(--text);cursor:pointer}
+.checklabel input{width:16px;height:16px;flex:none}
+.field input,.field select{background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:8px 9px;font-size:14px;color:var(--text);font-family:"DM Sans",system-ui,sans-serif;min-width:0}
+.field input:focus,.field select:focus{outline:2px solid var(--accent);outline-offset:1px}
+.targets-out{margin-top:14px;padding-top:12px;border-top:1px dashed var(--border);font-size:12.5px;color:var(--text-muted);line-height:1.6}
+.targets-out b{color:var(--text);font-family:"IBM Plex Mono",monospace;font-weight:600}
+.meters{display:flex;flex-direction:column;gap:12px}
+.meter-row{display:flex;flex-direction:column;gap:5px}
+.meter-top{display:flex;justify-content:space-between;font-size:12.5px}
+.meter-top .name{color:var(--text-muted)}
+.meter-top .val{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;color:var(--text)}
+.meter-top .val.warn{color:var(--warn)}
+.meter-top .val.good{color:var(--good)}
+.bar{height:7px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.bar>i{display:block;height:100%;border-radius:99px;background:var(--accent)}
+.bar>i.warn{background:var(--warn)}
+.bar>i.good{background:var(--good)}
+.entries{display:flex;flex-direction:column;gap:8px}
+.entry{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+.entry .info{flex:1;min-width:0}
+.entry .name{font-size:14px;font-weight:500}
+.entry .portion{font-size:12px;color:var(--text-muted)}
+.entry .macros{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--text-muted);margin-top:3px;font-variant-numeric:tabular-nums}
+.entry .del{background:none;border:none;color:var(--text-muted);font-size:18px;cursor:pointer;padding:4px 6px;line-height:1;border-radius:6px}
+.entry .del:hover{background:var(--warn-bg);color:var(--warn)}
+.empty{font-size:13px;color:var(--text-muted);padding:14px 2px}
+.addform{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
+.addform .full{grid-column:1/-1}
+.addform.logform{grid-template-columns:1fr 112px}
+.addform button[type="submit"]{grid-column:1/-1;background:var(--ink);color:var(--ink-text);border:none;border-radius:999px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:"DM Sans",system-ui,sans-serif;margin-top:2px}
+.addform button[type="submit"]:active{transform:translateY(1px)}
+.usual{grid-column:1/-1;display:flex;flex-direction:column;gap:6px}
+.usual .lab{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px}
+.usual .row{display:flex;flex-wrap:wrap;gap:6px}
+.pv{grid-column:1/-1;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+.pv-title{font-size:14px;font-weight:600}
+.pv-sub{font-size:12px;color:var(--text-muted);margin-top:1px}
+.pv-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.pv-cell .v{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:18px;font-variant-numeric:tabular-nums;line-height:1.1}
+.pv-cell .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--text-muted);margin-top:2px}
+.pv-after{font-size:12px;color:var(--text-muted);margin-top:10px;line-height:1.5}
+.pv-after b{color:var(--text);font-family:"IBM Plex Mono",monospace;font-weight:600}
+.pv-hint{font-size:12.5px;color:var(--text-muted);line-height:1.5;margin-top:2px}
+.pv-miss{font-size:12.5px;color:var(--warn);line-height:1.5;margin-top:2px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.usual .chip{margin-top:0}
+.chip{background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:99px;padding:5px 11px;font-size:12px;cursor:pointer;font-family:"DM Sans",system-ui,sans-serif}
+.chip:hover{border-color:var(--text)}
+.chip:focus-visible,.hrow:focus-visible,.daynav button:focus-visible,.addform button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.addform.custom{margin-top:14px}
+.cflist{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.cfitem{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12.5px;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:6px 10px}
+.cfitem span{min-width:0;overflow-wrap:anywhere}
+.cfitem .cfm{color:var(--text-muted);font-family:"IBM Plex Mono",monospace;font-size:11px}
+.cfitem button{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:12px;text-decoration:underline;padding:2px 4px;flex:none}
+.cfitem button:hover{color:var(--warn)}
+.insights{display:flex;flex-direction:column;gap:10px;font-size:13px;line-height:1.55;color:var(--text-muted)}
+.insights b{color:var(--text);font-weight:600;font-family:"IBM Plex Mono",monospace;font-size:12.5px}
+.insights p{margin:0}
+.hist{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.hrow{display:flex;flex-direction:column;gap:6px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:9px 12px;cursor:pointer;color:var(--text);font-family:"DM Sans",system-ui,sans-serif}
+.hrow:hover,.hrow.cur{border-color:var(--accent)}
+.hrow .top{display:flex;justify-content:space-between;gap:8px;font-size:13px;font-weight:500}
+.hrow .top span:last-child{font-family:"IBM Plex Mono",monospace;font-size:12px;font-variant-numeric:tabular-nums;color:var(--text-muted);font-weight:500}
+.hrow .bar{height:6px}
+.hrow .meta{font-size:11.5px;color:var(--text-muted);font-variant-numeric:tabular-nums}
+.foot-note{font-size:11.5px;color:var(--text-muted);line-height:1.6;margin-top:22px;padding-top:14px;border-top:1px solid var(--border)}
+@media(max-width:420px){.field-grid,.addform{grid-template-columns:1fr}
+.addform.logform{grid-template-columns:1fr 104px}
+.pv-cell .v{font-size:16px}
+.stat .num{font-size:36px}}
+#app-root .weeks-row{display:flex;align-items:center;gap:12px}
+#app-root .weeks-row input[type=range]{flex:1;width:auto;min-width:0;accent-color:var(--accent);height:28px;padding:0;background:none;border:none}
+#app-root .weeks-val{font-family:"IBM Plex Mono",ui-monospace,monospace;font-weight:600;font-size:14px;min-width:78px;text-align:right;color:var(--text)}
+#app-root .weeks-scale{display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted)}
+#app-root .targets-out p{margin:0 0 8px}
+#app-root .targets-out p:last-child{margin-bottom:0}
+#app-root .plan-warn{color:var(--warn);background:var(--warn-bg);border-radius:8px;padding:8px 10px}
+#app-root .plan-warn b{color:var(--warn)}
+#app-root .plan-fine{font-size:11.5px}
+#app-root .prof-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:14px;flex-wrap:wrap}
+#app-root .prof-status{margin-right:auto;font-size:12.5px;color:var(--text-muted)}
+#app-root .btn-save{background:var(--ink);color:var(--ink-text);border:none;border-radius:999px;padding:10px 18px;font-size:14px;font-weight:600;cursor:pointer}
+#app-root .btn-ghost{background:none;border:1px solid var(--border);color:var(--text);border-radius:999px;padding:9px 16px;font-size:14px;cursor:pointer}
+#app-root .btn-save:disabled,#app-root .btn-ghost:disabled{opacity:.4;cursor:default}
+#app-root .btn-save:focus-visible,#app-root .btn-ghost:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+body{background:#000;color:#fff}
+#app-root .bar{background:#262626}
+#app-root .bar>i{background:var(--accent)}
+#app-root .bar>i.good{background:var(--good)}
+#app-root .card,#app-root .entry,#app-root .hrow,#app-root .chip,#app-root .pv,#app-root .cfitem{background:#000;border-color:var(--border)}
+#app-root .field input,#app-root .field select{background:#000;border:1px solid var(--border);color:#fff}
+#app-root .field input:disabled{opacity:.45}
+#app-root .hero{border-bottom-color:var(--border)}
+#app-root .targets-out{border-top-color:rgba(255,255,255,.35)}
+#app-root .entry .del:hover{background:var(--warn-bg);color:var(--warn)}
+.s-panel{background:transparent;border:none;padding:0;border-radius:0}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;scrollbar-width:none;position:sticky;top:64px;z-index:5;background:#000;padding:12px 0 14px;margin:0 0 6px}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;background:#000;border:1px solid #fff;color:#fff;border-radius:999px;padding:8px 16px;font:500 14px/1 "DM Sans",system-ui,sans-serif;cursor:pointer}
+.tab:hover{background:#1a1a1a}
+.tab.on{background:#fff;color:#000}
+.tab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (max-width:640px){.tabs{flex-wrap:nowrap;overflow-x:auto}}
+#app-root input[type=checkbox]{accent-color:var(--accent)}
+
+/* ---- Added: save status, tabs panel, entry editing, weigh-in, milestone, target check, chart, scan, backup ---- */
+.save-state{margin:-2px 0 10px;font-size:12px;color:var(--text-muted);min-height:16px}
+.save-state.error{color:var(--warn)}
+#panel:focus{outline:none}
+#panel:focus-visible{outline:1px dashed rgba(255,255,255,.4);outline-offset:6px}
+#app-root .field .checklabel{text-transform:none;letter-spacing:0;font-size:13px}
+#app-root .entry .edit{background:none;border:1px solid var(--border);color:var(--text);border-radius:999px;padding:5px 12px;font-size:12.5px;cursor:pointer;flex:none}
+#app-root .entry .edit:hover{background:#1a1a1a}
+#app-root .entry.editing{display:block;padding:14px}
+#app-root .edit-form{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
+#app-root .edit-form .full{grid-column:1/-1}
+#app-root .edit-title{grid-column:1/-1;font-weight:600;font-size:14px}
+#app-root .ed-hint{display:block;font-size:12px;color:var(--text-muted);margin-top:4px;text-transform:none;letter-spacing:0}
+#app-root .ed-hint.bad,#app-root .weigh-note.bad,#app-root .scan-msg.bad,#app-root .backup-msg.bad{color:var(--warn)}
+#app-root .edit-actions,#app-root .ms-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:4px}
+#app-root .weigh-form{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}
+#app-root .weigh-form .field{flex:1;min-width:150px}
+#app-root .weigh-note,#app-root .chart-note,#app-root .empty-note{font-size:12.5px;color:var(--text-muted);line-height:1.55;margin:10px 0 0}
+#app-root .weigh-note b,#app-root .chart-note b{color:var(--text)}
+#app-root .milestone{border:1px solid var(--good);border-radius:14px;padding:16px;margin-bottom:22px;background:#000}
+#app-root .milestone p{margin:0 0 8px;font-size:13px;color:var(--text-muted);line-height:1.55}
+#app-root .milestone .ms-title{color:var(--good);font-size:16px;font-weight:600;margin-bottom:6px}
+#app-root .adapt p{margin:0 0 10px;font-size:13px;line-height:1.6;color:var(--text-muted)}
+#app-root .adapt p b{color:var(--text)}
+#app-root .checklist{margin:0 0 10px;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--text-muted)}
+#app-root .checklist li::before{content:"\25CB  ";color:var(--accent)}
+#app-root .checklist li.ok::before{content:"\25CF  ";color:var(--good)}
+#app-root .applied{font-size:12.5px;color:var(--text-muted)}
+#app-root .linkbtn{background:none;border:none;color:var(--text);text-decoration:underline;cursor:pointer;padding:0;font:inherit}
+#app-root .chart{width:100%;height:auto;display:block}
+#app-root .ch-grid{stroke:rgba(255,255,255,.15);stroke-width:1}
+#app-root .ch-lab{fill:var(--text-muted);font-size:11px;font-family:"DM Sans",system-ui,sans-serif}
+#app-root .ch-line{fill:none;stroke:#fff;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+#app-root .ch-dot{fill:#fff}
+#app-root .ch-last{fill:var(--accent);stroke:#fff;stroke-width:1.5}
+#app-root .ch-goal{stroke:var(--good);stroke-width:1.5;stroke-dasharray:6 5}
+#app-root .ch-goal-lab{fill:var(--good);font-size:11px;font-weight:600;font-family:"DM Sans",system-ui,sans-serif}
+#app-root .scan{display:flex;flex-direction:column;gap:8px;padding-bottom:4px}
+#app-root .scan-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+#app-root .scan-row input{flex:1;min-width:0;background:#000;border:1px solid var(--border);color:#fff;border-radius:8px;padding:8px 9px;font-size:14px}
+#app-root .scan-code label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px}
+#app-root .scan-msg,#app-root .backup-msg{font-size:12.5px;color:var(--text-muted);margin:0;line-height:1.5;min-height:0}
+#app-root .backup p{margin:0 0 10px;font-size:13px;color:var(--text-muted)}
+#app-root .backup .ms-actions{justify-content:flex-start}
+#app-root .import-confirm{border:1px solid var(--warn);border-radius:10px;padding:12px;margin:12px 0 0}
+#app-root .import-confirm p{color:var(--text)}
+#app-root .adapt .bar{margin-top:4px}
+@media(max-width:420px){#app-root .edit-form{grid-template-columns:1fr}}
+
+</style>
+</head>
+<body><header class="s-head"><div class="s-wrap">
 <a class="s-logo" href="#top"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5 17.5L19 6.5" stroke="var(--s-clay)" stroke-width="2.2" stroke-linecap="round"/></svg>Cutline</a>
 <nav class="s-nav" aria-label="Main"><a href="#how">How it works</a><a href="#foods">Foods</a><a href="#faq">FAQ</a><a class="s-btn s-btn-dark" href="#tracker">Start logging</a></nav>
 </div></header>
@@ -126,7 +338,7 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
 <div class="s-steps">
 <div class="s-step"><h3>Set your targets</h3><p>Enter your height, weight, goal and activity level once. Cutline works out a daily calorie target with the Mifflin-St Jeor formula, plus protein and net-carb targets for keto or low carb.</p></div>
 <div class="s-step"><h3>Log as you eat</h3><p>Type a food and how much you had. You see calories, protein, net carbs and fat, and what&rsquo;s left for the day, before you press Enter.</p></div>
-<div class="s-step"><h3>Watch the trend</h3><p>Weigh in when you like. Cutline keeps your recent days, turns your usual foods into one-tap buttons, and estimates the weeks to your goal weight.</p></div>
+<div class="s-step"><h3>Watch the trend</h3><p>Weigh in each morning and Cutline charts your trend. After 14 logged days it checks your targets against your real results and offers a better maintenance number.</p></div>
 </div>
 </div></section>
 <section class="s-sec" id="foods"><div class="s-wrap s-split">
@@ -147,11 +359,11 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
 <div class="s-band">
 <div><h2>Private by default.</h2></div>
 <div style="display:flex;flex-direction:column;gap:24px">
-<p>Cutline is one web page with no ads and no analytics. There is no account to create and no server holding your diary.</p>
+<p>Cutline is one web page with no ads and no analytics. There is no Cutline account to create and no Cutline server holding your diary.</p>
 <ul>
 <li>On the web, your log stays in this browser on this device.</li>
 <li>Opened inside Claude, it saves to your own Claude account instead.</li>
-<li>The code is open, so you can read exactly what it does.</li>
+<li>The code is open, so you can read exactly what it does. Fonts load from Google Fonts.</li>
 </ul>
 </div>
 </div>
@@ -160,121 +372,19 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
 <h2>Questions</h2>
 <div class="s-faq">
 <details><summary>How accurate are the numbers?</summary><p>Close enough to steer by. Generic foods are USDA averages, weighed cooked unless the name says raw. Brand items match the package label, but recipes change, so check yours.</p></details>
-<details><summary>What if my food isn&rsquo;t in the list?</summary><p>Open Custom foods in the tracker, type the values from the label for one serving, and it&rsquo;s searchable from then on.</p></details>
-<details><summary>Can I use it on my phone?</summary><p>Yes. It&rsquo;s built for phones first. Add the page to your home screen and it opens like an app.</p></details>
+<details><summary>What if my food isn&rsquo;t in the list?</summary><p>Open Custom foods in the tracker. On the web version you can scan or type the barcode to look it up in Open Food Facts; inside Claude you can photograph the nutrition label. Check the numbers, save, and it&rsquo;s searchable from then on.</p></details>
+<details><summary>Can I use it on my phone?</summary><p>Yes. It&rsquo;s built for phones first. On the web version, add the page to your home screen and it opens like an app.</p></details>
 <details><summary>Will I lose my log if I clear my browser?</summary><p>On the web, yes, because the log lives in your browser. Opened inside Claude, it&rsquo;s kept in your Claude account.</p></details>
 <details><summary>Is this medical advice?</summary><p>No. Targets come from standard formulas and are estimates. Talk to a doctor or dietitian before a big change to how you eat.</p></details>
 </div>
 </div></section>
 </main>
-<footer class="s-foot"><div class="s-wrap"><span>Cutline &middot; a food diary for cutting and building</span><span>Open source on <a href="https://github.com/Skull-Bones/Cutline">GitHub</a></span></div></footer><script id="state-data" type="application/json">{"profile":{"sex":"","age":30,"heightIn":68,"weightLb":180,"goalWeightLb":170,"activity":1.55,"dietMode":"lowcarb","deficit":500,"goalWeeks":12,"proteinFloorEnabled":false,"proteinFloorG":150},"customFoods":[],"days":{},"weights":{}}</script><script>(function boot(state){
-  var HEAD_RESET = ':root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,-apple-system,sans-serif;background:#fafafa}img{max-width:100%}[hidden]{display:none!important}';
-
-  var CSS = ':root{--bg:#FAF9F5;--surface:#FFFFFF;--surface-2:#F0EEE6;--text:#141413;--text-muted:#5E5D59;--accent:#C96442;--accent-ink:#FAF9F5;--ink:#141413;--ink-text:#FAF9F5;--accent-2:#4D6B3A;--border:#E6E3DA;--warn:#B23A2A;--warn-bg:#F7E6E1;--good:#4D6B3A;--good-bg:#E8EEE2;color-scheme:light}' +
-    '@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#141413;--surface:#1E1D1B;--surface-2:#292826;--text:#F0EEE6;--text-muted:#A9A69C;--accent:#E0896A;--accent-ink:#141413;--ink:#F0EEE6;--ink-text:#141413;--accent-2:#93B07C;--border:#34332F;--warn:#E57A6A;--warn-bg:#3A2420;--good:#93B07C;--good-bg:#232B1E;color-scheme:dark}}' +
-    ':root[data-theme="dark"]{--bg:#141413;--surface:#1E1D1B;--surface-2:#292826;--text:#F0EEE6;--text-muted:#A9A69C;--accent:#E0896A;--accent-ink:#141413;--ink:#F0EEE6;--ink-text:#141413;--accent-2:#93B07C;--border:#34332F;--warn:#E57A6A;--warn-bg:#3A2420;--good:#93B07C;--good-bg:#232B1E;color-scheme:dark}' +
-    '*{box-sizing:border-box}' +
-    'body{background:var(--bg);color:var(--text)}' +
-    '#app-root{font-family:"DM Sans",system-ui,sans-serif;min-width:0}' +
-    '.hero{padding-block:14px 14px;border-bottom:1px solid var(--border);margin-bottom:18px;display:flex;flex-direction:column;gap:12px}' +
-    '.hero-top{display:flex;align-items:center;justify-content:space-between;gap:8px}' +
-    '.hero .brand{display:none}.x-brand{font-family:"DM Sans",system-ui,sans-serif;font-weight:600;font-size:19px;letter-spacing:.2px}' +
-    '.daynav{display:flex;align-items:center;gap:10px}' +
-    '.daynav button{background:var(--surface-2);border:1px solid var(--border);color:var(--text);width:30px;height:30px;border-radius:8px;font-size:15px;cursor:pointer;line-height:1}' +
-    '.daynav button:active{transform:translateY(1px)}' +
-    '.daylabel{font-size:13px;color:var(--text-muted);min-width:84px;text-align:center;font-variant-numeric:tabular-nums}' +
-    '.stats{display:flex;gap:28px;flex-wrap:wrap;align-items:flex-end}' +
-    '.stat{display:flex;flex-direction:column;gap:4px}' +
-    '.stat .num{font-family:"DM Sans",system-ui,sans-serif;font-weight:500;font-size:44px;letter-spacing:-1.2px;line-height:1;font-variant-numeric:tabular-nums}' +
-    '.stat .num.over{color:var(--warn)}' +
-    '.stat .num.good{color:var(--good)}' +
-    '.stat .unit{font-size:12px;color:var(--text-muted)}' +
-    '.hero .sub{font-size:12px;color:var(--text-muted);line-height:1.55}' +
-    '.hero .sub b{color:var(--text);font-weight:600}' +
-    '#app-root section{margin-bottom:22px}' +
-    '#app-root h2{font-family:"DM Sans",system-ui,sans-serif;font-weight:500;font-size:12px;margin:0 0 10px;text-transform:uppercase;letter-spacing:.9px;color:var(--text-muted)}' +
-    '.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px}' +
-    'details.card summary{cursor:pointer;font-family:"DM Sans",system-ui,sans-serif;font-weight:500;font-size:16px;list-style:none;display:flex;justify-content:space-between;align-items:center}' +
-    'details.card summary::-webkit-details-marker{display:none}' +
-    'details.card summary .chev{color:var(--text-muted);transition:transform .15s}' +
-    'details.card[open] summary .chev{transform:rotate(90deg)}' +
-    '.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px;margin-top:14px}' +
-    '.field{display:flex;flex-direction:column;gap:4px;min-width:0}.field input:not([type=checkbox]){width:100%}' +
-    '.field.full{grid-column:1/-1}' +
-    '.field label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px}' +
-    '.checkrow{flex-direction:row;align-items:center}' +
-    '.checklabel{display:flex;align-items:center;gap:8px;font-size:12.5px;text-transform:none;letter-spacing:0;color:var(--text);cursor:pointer}' +
-    '.checklabel input{width:16px;height:16px;flex:none}' +
-    '.field input,.field select{background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:8px 9px;font-size:14px;color:var(--text);font-family:"DM Sans",system-ui,sans-serif;min-width:0}' +
-    '.field input:focus,.field select:focus{outline:2px solid var(--accent);outline-offset:1px}' +
-    '.targets-out{margin-top:14px;padding-top:12px;border-top:1px dashed var(--border);font-size:12.5px;color:var(--text-muted);line-height:1.6}' +
-    '.targets-out b{color:var(--text);font-family:"IBM Plex Mono",monospace;font-weight:600}' +
-    '.meters{display:flex;flex-direction:column;gap:12px}' +
-    '.meter-row{display:flex;flex-direction:column;gap:5px}' +
-    '.meter-top{display:flex;justify-content:space-between;font-size:12.5px}' +
-    '.meter-top .name{color:var(--text-muted)}' +
-    '.meter-top .val{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;color:var(--text)}' +
-    '.meter-top .val.warn{color:var(--warn)}' +
-    '.meter-top .val.good{color:var(--good)}' +
-    '.bar{height:7px;border-radius:99px;background:var(--surface-2);overflow:hidden}' +
-    '.bar>i{display:block;height:100%;border-radius:99px;background:var(--accent)}' +
-    '.bar>i.warn{background:var(--warn)}' +
-    '.bar>i.good{background:var(--good)}' +
-    '.entries{display:flex;flex-direction:column;gap:8px}' +
-    '.entry{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px}' +
-    '.entry .info{flex:1;min-width:0}' +
-    '.entry .name{font-size:14px;font-weight:500}' +
-    '.entry .portion{font-size:12px;color:var(--text-muted)}' +
-    '.entry .macros{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--text-muted);margin-top:3px;font-variant-numeric:tabular-nums}' +
-    '.entry .del{background:none;border:none;color:var(--text-muted);font-size:18px;cursor:pointer;padding:4px 6px;line-height:1;border-radius:6px}' +
-    '.entry .del:hover{background:var(--warn-bg);color:var(--warn)}' +
-    '.empty{font-size:13px;color:var(--text-muted);padding:14px 2px}' +
-    '.addform{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}' +
-    '.addform .full{grid-column:1/-1}' +
-    '.addform.logform{grid-template-columns:1fr 112px}' +
-    '.addform button[type="submit"]{grid-column:1/-1;background:var(--ink);color:var(--ink-text);border:none;border-radius:999px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:"DM Sans",system-ui,sans-serif;margin-top:2px}' +
-    '.addform button[type="submit"]:active{transform:translateY(1px)}' +
-    '.usual{grid-column:1/-1;display:flex;flex-direction:column;gap:6px}' +
-    '.usual .lab{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px}' +
-    '.usual .row{display:flex;flex-wrap:wrap;gap:6px}' +
-    '.pv{grid-column:1/-1;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:10px 12px}' +
-    '.pv-title{font-size:14px;font-weight:600}' +
-    '.pv-sub{font-size:12px;color:var(--text-muted);margin-top:1px}' +
-    '.pv-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}' +
-    '.pv-cell .v{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:18px;font-variant-numeric:tabular-nums;line-height:1.1}' +
-    '.pv-cell .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--text-muted);margin-top:2px}' +
-    '.pv-after{font-size:12px;color:var(--text-muted);margin-top:10px;line-height:1.5}' +
-    '.pv-after b{color:var(--text);font-family:"IBM Plex Mono",monospace;font-weight:600}' +
-    '.pv-hint{font-size:12.5px;color:var(--text-muted);line-height:1.5;margin-top:2px}' +
-    '.pv-miss{font-size:12.5px;color:var(--warn);line-height:1.5;margin-top:2px}' +
-    '.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}' +
-    '.usual .chip{margin-top:0}' +
-    '.chip{background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:99px;padding:5px 11px;font-size:12px;cursor:pointer;font-family:"DM Sans",system-ui,sans-serif}' +
-    '.chip:hover{border-color:var(--text)}.chip:focus-visible,.hrow:focus-visible,.daynav button:focus-visible,.addform button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}' +
-    '.addform.custom{margin-top:14px}' +
-    '.cflist{display:flex;flex-direction:column;gap:6px;margin-top:12px}' +
-    '.cfitem{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12.5px;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:6px 10px}' +
-    '.cfitem span{min-width:0;overflow-wrap:anywhere}' +
-    '.cfitem .cfm{color:var(--text-muted);font-family:"IBM Plex Mono",monospace;font-size:11px}' +
-    '.cfitem button{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:12px;text-decoration:underline;padding:2px 4px;flex:none}' +
-    '.cfitem button:hover{color:var(--warn)}' +
-    '.insights{display:flex;flex-direction:column;gap:10px;font-size:13px;line-height:1.55;color:var(--text-muted)}' +
-    '.insights b{color:var(--text);font-weight:600;font-family:"IBM Plex Mono",monospace;font-size:12.5px}' +
-    '.insights p{margin:0}' +
-    '.hist{display:flex;flex-direction:column;gap:6px;margin-top:12px}' +
-    '.hrow{display:flex;flex-direction:column;gap:6px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:9px 12px;cursor:pointer;color:var(--text);font-family:"DM Sans",system-ui,sans-serif}' +
-    '.hrow:hover,.hrow.cur{border-color:var(--accent)}' +
-    '.hrow .top{display:flex;justify-content:space-between;gap:8px;font-size:13px;font-weight:500}' +
-    '.hrow .top span:last-child{font-family:"IBM Plex Mono",monospace;font-size:12px;font-variant-numeric:tabular-nums;color:var(--text-muted);font-weight:500}' +
-    '.hrow .bar{height:6px}' +
-    '.hrow .meta{font-size:11.5px;color:var(--text-muted);font-variant-numeric:tabular-nums}' +
-    '.foot-note{font-size:11.5px;color:var(--text-muted);line-height:1.6;margin-top:22px;padding-top:14px;border-top:1px solid var(--border)}' +
-    '@media(max-width:420px){.field-grid,.addform{grid-template-columns:1fr}.addform.logform{grid-template-columns:1fr 104px}.pv-cell .v{font-size:16px}.stat .num{font-size:36px}}';
-
-  CSS += "#app-root .weeks-row{display:flex;align-items:center;gap:12px}#app-root .weeks-row input[type=range]{flex:1;width:auto;min-width:0;accent-color:var(--accent);height:28px;padding:0;background:none;border:none}#app-root .weeks-val{font-family:\"IBM Plex Mono\",ui-monospace,monospace;font-weight:600;font-size:14px;min-width:78px;text-align:right;color:var(--text)}#app-root .weeks-scale{display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted)}#app-root .targets-out p{margin:0 0 8px}#app-root .targets-out p:last-child{margin-bottom:0}#app-root .plan-warn{color:var(--warn);background:var(--warn-bg);border-radius:8px;padding:8px 10px}#app-root .plan-warn b{color:var(--warn)}#app-root .plan-fine{font-size:11.5px}#app-root .prof-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:14px;flex-wrap:wrap}#app-root .prof-status{margin-right:auto;font-size:12.5px;color:var(--text-muted)}#app-root .btn-save{background:var(--ink);color:var(--ink-text);border:none;border-radius:999px;padding:10px 18px;font-size:14px;font-weight:600;cursor:pointer}#app-root .btn-ghost{background:none;border:1px solid var(--border);color:var(--text);border-radius:999px;padding:9px 16px;font-size:14px;cursor:pointer}#app-root .btn-save:disabled,#app-root .btn-ghost:disabled{opacity:.4;cursor:default}#app-root .btn-save:focus-visible,#app-root .btn-ghost:focus-visible{outline:2px solid var(--accent);outline-offset:2px}";
-
-  CSS += ":root,:root:not([data-theme]),:root:not([data-theme=\"light\"]),:root[data-theme=\"dark\"],:root[data-theme=\"light\"]{--bg:#000000;--surface:#000000;--surface-2:#141414;--text:#FFFFFF;--text-muted:#A3A3A3;--accent:#E5383B;--accent-ink:#FFFFFF;--ink:#FFFFFF;--ink-text:#000000;--accent-2:#4CBB17;--border:#FFFFFF;--warn:#FF5A5C;--warn-bg:#2B0B0C;--good:#4CBB17;--good-bg:#0E2306;--s-clay:#E5383B;color-scheme:dark}body{background:#000;color:#fff}#app-root .bar{background:#262626}#app-root .bar>i{background:var(--accent)}#app-root .bar>i.good{background:var(--good)}#app-root .card,#app-root .entry,#app-root .hrow,#app-root .chip,#app-root .pv,#app-root .cfitem{background:#000;border-color:var(--border)}#app-root .field input,#app-root .field select{background:#000;border:1px solid var(--border);color:#fff}#app-root .field input:disabled{opacity:.45}#app-root .hero{border-bottom-color:var(--border)}#app-root .targets-out{border-top-color:rgba(255,255,255,.35)}#app-root .entry .del:hover{background:var(--warn-bg);color:var(--warn)}.s-panel{background:transparent;border:none;padding:0;border-radius:0}.tabs{display:flex;flex-wrap:wrap;gap:8px;scrollbar-width:none;position:sticky;top:64px;z-index:5;background:#000;padding:12px 0 14px;margin:0 0 6px}.tabs::-webkit-scrollbar{display:none}.tab{flex:none;background:#000;border:1px solid #fff;color:#fff;border-radius:999px;padding:8px 16px;font:500 14px/1 \"DM Sans\",system-ui,sans-serif;cursor:pointer}.tab:hover{background:#1a1a1a}.tab.on{background:#fff;color:#000}.tab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}@media (max-width:640px){.tabs{flex-wrap:nowrap;overflow-x:auto}}#app-root input[type=checkbox]{accent-color:var(--accent)}";
-
+<footer class="s-foot"><div class="s-wrap"><span>Cutline &middot; a food diary for cutting and building. Not affiliated with any restaurant or brand listed.</span><span>Open source on <a href="https://github.com/Skull-Bones/Cutline">GitHub</a></span></div></footer>
+<script id="state-data" type="application/json">{"profile":{"sex":"","age":30,"heightIn":68,"weightLb":180,"goalWeightLb":170,"activity":1.55,"dietMode":"lowcarb","proteinFloorEnabled":false,"proteinFloorG":150,"goalWeeks":12},"customFoods":[],"days":{},"weights":{},"flags":{}}</script>
+<script>
+(function(){
+  var state = JSON.parse(document.getElementById('state-data').textContent);
+// Food catalog: generic foods per 100g, brand items per serving, restaurant items per item.
   // Per 100g. Cooked weight unless the name says raw. F(name, aliases, kcal, protein, carbs, fiber, fat, [pieceName, pieceGrams])
   // S(...) takes label values for one serving and converts them to per 100g, so "1" or "1x" logs one serving.
   function F(n,a,cal,p,c,fi,f,pc){ return {n:n,a:a?a.split('|'):[],cal:cal,p:p,c:c,fi:fi,f:f,pc:pc?{name:pc[0],g:pc[1]}:null}; }
@@ -456,6 +566,8 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
   CHAIN(`Chili's`,`chilis`,[[`Oldtimer with Cheese`,``,850,49,45,0,53,0],[`Big Smasher Burger`,``,950,47,49,0,64,0],[`Bacon Cheeseburger`,``,1130,63,44,0,79,0],[`Classic Sirloin, 6 oz`,`steak`,250,34,1,0,12,0],[`Classic Sirloin, 10 oz`,`steak`,390,54,2,0,18,0],[`Classic Ribeye`,`steak`,620,67,0,0,39,0],[`Margarita Grilled Chicken`,``,640,69,61,0,14,0],[`Guiltless Grill Chicken Platter`,``,350,35,37,0,8,0],[`Crispy Crispers, 4 count`,`chicken crispers|tenders`,790,45,38,0,51,0],[`Chicken Fajitas`,``,480,62,22,0,17,0],[`Steak Fajitas`,``,570,57,24,0,29,0],[`Baby Back Ribs, half rack`,`ribs`,1130,68,54,0,73,0],[`Ancho Salmon`,``,590,48,41,0,31,0],[`Cajun Pasta with Grilled Chicken`,``,1160,64,109,0,51,0],[`Southwestern Eggrolls`,`egg rolls`,1020,36,108,0,49,0],[`Boneless Wings, 8 buffalo`,``,920,36,44,0,67,0],[`Chips & Salsa`,``,910,13,113,0,45,0],[`Santa Fe Chicken Salad, grilled`,``,540,35,24,0,35,0],[`Homestyle Fries`,``,420,6,60,0,17,`side`],[`Steamed Broccoli`,``,40,3,8,0,0,`side`],[`Mashed Potatoes`,``,230,4,25,0,13,`side`],[`Black Beans`,``,110,6,20,0,0.5,`side`],[`Mexican Rice`,``,160,3,27,0,4.5,`side`],[`Molten Chocolate Cake`,``,1140,13,147,0,57,0]]);
   CHAIN(`Chipotle`,``,[[`Chicken, 4 oz`,``,180,32,0,0,7,`portion`],[`Steak, 4 oz`,``,150,21,1,0,6,`portion`],[`Barbacoa, 4 oz`,``,170,24,2,0,7,`portion`],[`Carnitas, 4 oz`,``,210,23,0,0,12,`portion`],[`Sofritas, 4 oz`,``,150,8,9,0,10,`portion`],[`White Rice, 4 oz`,`cilantro lime rice`,210,4,40,0,4,`portion`],[`Brown Rice, 4 oz`,``,210,4,36,0,6,`portion`],[`Black Beans, 4 oz`,``,130,8,22,0,1.5,`portion`],[`Pinto Beans, 4 oz`,``,130,8,21,0,1.5,`portion`],[`Fajita Veggies, 2 oz`,``,20,1,5,0,0,`portion`],[`Fresh Tomato Salsa, 4 oz`,`pico`,25,0,4,0,0,`portion`],[`Roasted Chili-Corn Salsa, 4 oz`,`corn salsa`,80,3,16,0,1.5,`portion`],[`Tomatillo Green Salsa, 2 oz`,``,15,0,4,0,0,`portion`],[`Tomatillo Red Salsa, 2 oz`,``,30,0,4,0,0,`portion`],[`Sour Cream, 2 oz`,``,110,2,2,0,9,`portion`],[`Cheese, 1 oz`,``,110,6,1,0,8,`portion`],[`Guacamole, 4 oz`,`guac`,230,2,8,0,22,`portion`],[`Queso Blanco, 2 oz`,`queso`,120,5,4,0,9,`portion`],[`Romaine Lettuce, 1 oz`,``,5,0,1,0,0,`portion`],[`Flour Tortilla, burrito`,``,320,8,50,0,9,`tortilla`],[`Crispy Corn Tortillas, 3`,`taco shells`,200,3,29,0,9,`order`],[`Chips`,`tortilla chips`,540,7,73,0,25,`bag`]]);
 
+
+// Pure helpers: formatting, dates, targets, search and amounts. No DOM access here, so tests can load it.
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
   function R(n){ return Math.round(n); }
   function R1(n){ return Math.round(n*10)/10; }
@@ -490,11 +602,19 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
     return Math.min(GOAL_MAX_WEEKS,Math.max(GOAL_MIN_WEEKS,w));
   }
   function calorieFloor(p){ return p.sex==='male'?1500:p.sex==='female'?1200:1350; }
-  function calcTargets(p){
-    var bmr=calcBMR(p), tdee=bmr*(p.activity||1.2);
+  // Whole-day number for a YYYY-MM-DD date (UTC-based, so daylight saving never shifts it).
+  function dayNum(d){ var a=String(d).split('-'); return Math.round(Date.UTC(+a[0],+a[1]-1,+a[2])/864e5); }
+
+  // Targets. The goal timeline starts on goalStart, so the daily deficit is recalculated from the
+  // weight still to lose and the days left. tdeeAdjust is the correction learned from real results.
+  function calcTargets(p,today){
+    today=today||todayStr();
+    var bmr=calcBMR(p), formulaTdee=bmr*(p.activity||1.2), tdee=formulaTdee+(p.tdeeAdjust||0);
     var weeks=goalWeeksOf(p), delta=(p.weightLb||0)-(p.goalWeightLb||0);
     if(Math.abs(delta)<0.5) delta=0;
-    var needed=delta*3500/(weeks*7), deficit=needed, floor=calorieFloor(p), limited='';
+    var totalDays=weeks*7, elapsed=Math.max(0, dayNum(today)-dayNum(p.goalStart||today));
+    var daysLeft=Math.max(7, totalDays-elapsed), ended=elapsed>=totalDays;
+    var needed=delta*3500/daysLeft, deficit=needed, floor=calorieFloor(p), limited='';
     if(deficit<-500){ deficit=-500; limited='surplus'; }
     if(deficit>0 && tdee-deficit<floor){ deficit=Math.max(0,tdee-floor); limited='floor'; }
     var calorieTarget=tdee-deficit, lbPerWeek=deficit*7/3500;
@@ -503,52 +623,36 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
     if(p.proteinFloorEnabled) proteinG=Math.max(proteinG,p.proteinFloorG||0);
     var netCarbG = p.netCarbLimit>0 ? p.netCarbLimit : (p.dietMode==='lowcarb'?75:25);
     var fatG=Math.max(0,(calorieTarget-proteinG*4-netCarbG*4)/9);
-    return {bmr:bmr,tdee:tdee,calorieTarget:calorieTarget,proteinG:proteinG,netCarbG:netCarbG,fatG:fatG,deficit:deficit,needed:needed,weeks:weeks,weeksActual:weeksActual,lbPerWeek:lbPerWeek,delta:delta,floor:floor,limited:limited};
+    return {bmr:bmr,formulaTdee:formulaTdee,tdee:tdee,calorieTarget:calorieTarget,proteinG:proteinG,netCarbG:netCarbG,fatG:fatG,deficit:deficit,needed:needed,weeks:weeks,weeksActual:weeksActual,lbPerWeek:lbPerWeek,delta:delta,floor:floor,limited:limited,elapsed:elapsed,daysLeft:daysLeft,totalDays:totalDays,ended:ended};
   }
 
-  // Profile edits go into a draft and only apply when Save is pressed.
-  var draft = null;
-  function addDaysLabel(n){ var d=new Date(); d.setDate(d.getDate()+Math.round(n)); return d.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}); }
-  function planHTML(p){
-    var t=calcTargets(p), out='', from=R1(p.weightLb||0), to=R1(p.goalWeightLb||0);
-    if(!t.delta) out+='<p>You&rsquo;re at your goal weight, so your targets are set to maintenance.<\/p>';
-    else if(t.delta>0) out+='<p>To go from <b>'+from+'<\/b> to <b>'+to+' lb<\/b> in <b>'+t.weeks+' weeks<\/b>, lose about <b>'+R1(t.delta/t.weeks)+' lb<\/b> a week. That takes a daily deficit of <b>'+N(t.needed)+'<\/b> kcal.<\/p>';
-    else out+='<p>To go from <b>'+from+'<\/b> to <b>'+to+' lb<\/b> in <b>'+t.weeks+' weeks<\/b>, gain about <b>'+R1(-t.delta/t.weeks)+' lb<\/b> a week. That takes a daily surplus of <b>'+N(-t.needed)+'<\/b> kcal.<\/p>';
-    if(t.limited==='floor') out+='<p class="plan-warn">That pace would put you under <b>'+N(t.floor)+'<\/b> kcal a day, the lowest Cutline will set. Your target stays at that level, which reaches your goal in about <b>'+R1(t.weeksActual)+'<\/b> weeks. Slide the timeline longer to match.<\/p>';
-    else if(t.limited==='surplus') out+='<p class="plan-warn">The surplus is capped at <b>500<\/b> kcal a day to limit fat gain, which reaches your goal in about <b>'+R1(t.weeksActual)+'<\/b> weeks.<\/p>';
-    else if(t.delta>0 && t.delta/t.weeks>(p.weightLb||0)*0.01) out+='<p class="plan-warn">That&rsquo;s more than 1% of your body weight a week, which makes it harder to keep muscle. A longer timeline is gentler.<\/p>';
-    out+='<p>Daily calories <b>'+N(t.calorieTarget)+'<\/b> &middot; protein <b>'+R(t.proteinG)+'g<\/b>'+(p.proteinFloorEnabled?' (floor)':'')+' &middot; net carbs <b>'+R(t.netCarbG)+'g<\/b> &middot; fat <b>'+R(t.fatG)+'g<\/b>'+(t.weeksActual?'<br>Goal date about <b>'+addDaysLabel(t.weeksActual*7)+'<\/b>':'')+'<\/p>';
-    out+='<p class="plan-fine">Maintenance is about '+N(t.tdee)+' kcal (BMR '+N(t.bmr)+' &times; activity). The plan assumes about 3,500 kcal per pound of body weight.<\/p>';
-    return out;
+  // Least-squares slope of weight over time, in lb per day. pts: [[dayNumber, weight], ...]
+  function slopePerDay(pts){
+    var n=pts.length; if(n<2) return 0;
+    var sx=0,sy=0,sxx=0,sxy=0;
+    pts.forEach(function(q){ sx+=q[0]; sy+=q[1]; sxx+=q[0]*q[0]; sxy+=q[0]*q[1]; });
+    var den=n*sxx-sx*sx; return den ? (n*sxy-sx*sy)/den : 0;
   }
-  function profileHTML(){
-    var p=draft||state.profile, w=goalWeeksOf(p), h='';
-    function num(id,label,field,val,attrs){ return '<div class="field"><label for="'+id+'">'+label+'<\/label><input id="'+id+'" type="number" data-field="'+field+'" value="'+(val==null?'':val)+'" '+(attrs||'')+'><\/div>'; }
-    h+='<div class="field-grid">';
-    h+='<div class="field"><label for="f-sex">Sex<\/label><select id="f-sex" data-field="sex"><option value=""'+(!p.sex?' selected':'')+'>Not set<\/option><option value="male"'+(p.sex==='male'?' selected':'')+'>Male<\/option><option value="female"'+(p.sex==='female'?' selected':'')+'>Female<\/option><\/select><\/div>';
-    h+=num('f-age','Age','age',p.age||'','min="10" max="100" placeholder="e.g. 34"');
-    h+=num('f-height','Height (in)','heightIn',p.heightIn,'step="0.1"');
-    h+='<div class="field"><label for="f-activity">Activity<\/label><select id="f-activity" data-field="activity">';
-    ACTIVITY.forEach(function(a){ h+='<option value="'+a.v+'"'+(Math.abs(p.activity-a.v)<0.001?' selected':'')+'>'+esc(a.label)+'<\/option>'; });
-    h+='<\/select><\/div>';
-    h+=num('f-weight','Current weight (lb)','weightLb',p.weightLb,'step="0.1"');
-    h+=num('f-goal','Goal weight (lb)','goalWeightLb',p.goalWeightLb,'step="0.1"');
-    h+='<div class="field full"><label for="f-weeks">Time to reach your goal<\/label><div class="weeks-row"><input id="f-weeks" type="range" min="'+GOAL_MIN_WEEKS+'" max="'+GOAL_MAX_WEEKS+'" step="1" data-field="goalWeeks" value="'+w+'" aria-describedby="weeks-val"><span id="weeks-val" class="weeks-val">'+w+' weeks<\/span><\/div><div class="weeks-scale"><span>6 weeks<\/span><span>26 weeks<\/span><\/div><\/div>';
-    h+='<div class="field"><label for="f-diet">Carb target<\/label><select id="f-diet" data-field="dietMode"><option value="keto"'+(p.dietMode==='keto'?' selected':'')+'>Keto (&le;25g net)<\/option><option value="lowcarb"'+(p.dietMode==='lowcarb'?' selected':'')+'>Low carb (&le;75g net)<\/option><\/select><\/div>';
-    h+=num('f-netlimit','Net carb limit (g)','netCarbLimit',p.netCarbLimit>0?p.netCarbLimit:'','step="1" min="0" placeholder="auto"');
-    h+=num('f-protfloor','Protein floor (g)','proteinFloorG',p.proteinFloorG,'step="5"'+(p.proteinFloorEnabled?'':' disabled'));
-    h+='<div class="field full checkrow"><label class="checklabel"><input type="checkbox" id="f-protfloor-on" data-field="proteinFloorEnabled" '+(p.proteinFloorEnabled?'checked':'')+'> Use protein floor instead of bodyweight target (optional goal)<\/label><\/div>';
-    h+='<\/div>';
-    h+='<div class="targets-out" id="prof-out">'+planHTML(p)+'<\/div>';
-    h+='<div class="prof-actions"><span id="prof-status" class="prof-status">'+(draft?'Unsaved changes':'Saved')+'<\/span><button type="button" class="btn-ghost" data-action="discard-profile" id="prof-discard"'+(draft?'':' disabled')+'>Discard<\/button><button type="button" class="btn-save" data-action="save-profile" id="prof-save"'+(draft?'':' disabled')+'>Save changes<\/button><\/div>';
-    return h;
+
+  // Real-world maintenance from the last 28 days: average logged intake plus the energy implied by the
+  // weight trend (about 3,500 kcal per lb). Needs 10 logged days and 3 weigh-ins spread over 10+ days.
+  var ADAPT_MIN_LOGGED=14, ADAPT_WINDOW=28, ADAPT_MIN_DAYS=10, ADAPT_MIN_WEIGHINS=3, ADAPT_MIN_SPAN=10, ADAPT_CLAMP=0.25;
+  function adaptiveEstimate(st,today){
+    today=today||todayStr();
+    var start=shiftDate(today,-ADAPT_WINDOW);
+    var days=Object.keys(st.days||{}).filter(function(d){ return d>=start && d<today && (st.days[d]||[]).length; }).sort();
+    var wk=Object.keys(st.weights||{}).filter(function(d){ return d>=start && d<=today; }).sort();
+    var span=wk.length>1 ? dayNum(wk[wk.length-1])-dayNum(wk[0]) : 0;
+    var res={logged:days.length, weighIns:wk.length, span:span, ready:false};
+    if(days.length<ADAPT_MIN_DAYS || wk.length<ADAPT_MIN_WEIGHINS || span<ADAPT_MIN_SPAN) return res;
+    var intake=days.reduce(function(a,d){ return a+dayTotals(st.days[d]).cals; },0)/days.length;
+    var slope=slopePerDay(wk.map(function(d){ return [dayNum(d), st.weights[d]]; }));
+    res.ready=true; res.intake=intake; res.slope=slope; res.estimate=intake-slope*3500;
+    return res;
   }
-  function updateProfilePreview(){
-    var p=draft||state.profile, o=$('prof-out'); if(o) o.innerHTML=planHTML(p);
-    var w=$('weeks-val'); if(w) w.textContent=goalWeeksOf(p)+' weeks';
-    ['prof-save','prof-discard'].forEach(function(id){ var b=$(id); if(b) b.disabled=!draft; });
-    var s=$('prof-status'); if(s) s.textContent=draft?'Unsaved changes':'Saved';
-    var pf=$('f-protfloor'); if(pf) pf.disabled=!p.proteinFloorEnabled;
+  function clampedAdjust(estimate, formulaTdee){
+    var lo=formulaTdee*(1-ADAPT_CLAMP), hi=formulaTdee*(1+ADAPT_CLAMP), v=Math.min(hi,Math.max(lo,estimate));
+    return {value:v, adjust:Math.round(v-formulaTdee), clamped:v!==estimate};
   }
 
   function dayTotals(entries){
@@ -591,6 +695,56 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
   function foodMacros(food,grams){
     var k=grams/100;
     return {cals:food.cal*k, protein:food.p*k, carbs:food.c*k, fiber:food.fi*k, fat:food.f*k};
+  }
+
+
+// UI: rendering, events and storage.
+  // Profile edits go into a draft and only apply when Save is pressed.
+  var draft = null;
+  function addDaysLabel(n){ var d=new Date(); d.setDate(d.getDate()+Math.round(n)); return d.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}); }
+  function planHTML(p){
+    var t=calcTargets(p), out='', from=R1(p.weightLb||0), to=R1(p.goalWeightLb||0);
+    var end=shiftDate(p.goalStart||todayStr(), t.totalDays), wk=Math.min(t.weeks, Math.floor(t.elapsed/7)+1);
+    var lead = t.elapsed>0 && !t.ended ? 'Week <b>'+wk+'<\/b> of <b>'+t.weeks+'<\/b>. ' : '';
+    if(!t.delta) out+='<p>You&rsquo;re at your goal weight, so your targets are set to maintenance.<\/p>';
+    else if(t.ended) out+='<p class="plan-warn">Your '+t.weeks+'-week timeline ended on <b>'+esc(prettyDate(end))+'<\/b>, with <b>'+R1(Math.abs(t.delta))+' lb<\/b> still to go. Move the slider and press Save to set a new timeline.<\/p>';
+    else if(t.delta>0) out+='<p>'+lead+'To go from <b>'+from+'<\/b> to <b>'+to+' lb<\/b> by <b>'+esc(prettyDate(end))+'<\/b>, lose about <b>'+R1(t.delta/t.daysLeft*7)+' lb<\/b> a week. That takes a daily deficit of <b>'+N(t.needed)+'<\/b> kcal.<\/p>';
+    else out+='<p>'+lead+'To go from <b>'+from+'<\/b> to <b>'+to+' lb<\/b> by <b>'+esc(prettyDate(end))+'<\/b>, gain about <b>'+R1(-t.delta/t.daysLeft*7)+' lb<\/b> a week. That takes a daily surplus of <b>'+N(-t.needed)+'<\/b> kcal.<\/p>';
+    if(t.limited==='floor') out+='<p class="plan-warn">That pace would put you under <b>'+N(t.floor)+'<\/b> kcal a day, the lowest Cutline will set. Your target stays at that level, which reaches your goal in about <b>'+R1(t.weeksActual)+'<\/b> weeks. Slide the timeline longer to match.<\/p>';
+    else if(t.limited==='surplus') out+='<p class="plan-warn">The surplus is capped at <b>500<\/b> kcal a day to limit fat gain, which reaches your goal in about <b>'+R1(t.weeksActual)+'<\/b> weeks.<\/p>';
+    else if(t.delta>0 && t.delta/t.daysLeft*7>(p.weightLb||0)*0.01) out+='<p class="plan-warn">That&rsquo;s more than 1% of your body weight a week, which makes it harder to keep muscle. A longer timeline is gentler.<\/p>';
+    out+='<p>Daily calories <b>'+N(t.calorieTarget)+'<\/b> &middot; protein <b>'+R(t.proteinG)+'g<\/b>'+(p.proteinFloorEnabled?' (floor)':'')+' &middot; net carbs <b>'+R(t.netCarbG)+'g<\/b> &middot; fat <b>'+R(t.fatG)+'g<\/b><\/p>';
+    out+='<p class="plan-fine">Maintenance is about '+N(t.tdee)+' kcal (BMR '+N(t.bmr)+' &times; activity'+(p.tdeeAdjust?', '+(p.tdeeAdjust>0?'+':'')+N(p.tdeeAdjust)+' from your results':'')+'). The plan assumes about 3,500 kcal per pound of body weight.<\/p>';
+    return out;
+  }
+  function profileHTML(){
+    var p=draft||state.profile, w=goalWeeksOf(p), h='';
+    function num(id,label,field,val,attrs){ return '<div class="field"><label for="'+id+'">'+label+'<\/label><input id="'+id+'" type="number" data-field="'+field+'" value="'+(val==null?'':val)+'" '+(attrs||'')+'><\/div>'; }
+    h+='<div class="field-grid">';
+    h+='<div class="field"><label for="f-sex">Sex<\/label><select id="f-sex" data-field="sex"><option value=""'+(!p.sex?' selected':'')+'>Not set<\/option><option value="male"'+(p.sex==='male'?' selected':'')+'>Male<\/option><option value="female"'+(p.sex==='female'?' selected':'')+'>Female<\/option><\/select><\/div>';
+    h+=num('f-age','Age','age',p.age||'','min="10" max="100" placeholder="e.g. 34"');
+    h+=num('f-height','Height (in)','heightIn',p.heightIn,'step="0.1"');
+    h+='<div class="field"><label for="f-activity">Activity<\/label><select id="f-activity" data-field="activity">';
+    ACTIVITY.forEach(function(a){ h+='<option value="'+a.v+'"'+(Math.abs(p.activity-a.v)<0.001?' selected':'')+'>'+esc(a.label)+'<\/option>'; });
+    h+='<\/select><\/div>';
+    h+=num('f-weight','Current weight (lb)','weightLb',p.weightLb,'step="0.1"');
+    h+=num('f-goal','Goal weight (lb)','goalWeightLb',p.goalWeightLb,'step="0.1"');
+    h+='<div class="field full"><label for="f-weeks">Time to reach your goal<\/label><div class="weeks-row"><input id="f-weeks" type="range" min="'+GOAL_MIN_WEEKS+'" max="'+GOAL_MAX_WEEKS+'" step="1" data-field="goalWeeks" value="'+w+'" aria-describedby="weeks-val"><span id="weeks-val" class="weeks-val">'+w+' weeks<\/span><\/div><div class="weeks-scale"><span>6 weeks<\/span><span>26 weeks<\/span><\/div><\/div>';
+    h+='<div class="field"><label for="f-diet">Carb target<\/label><select id="f-diet" data-field="dietMode"><option value="keto"'+(p.dietMode==='keto'?' selected':'')+'>Keto (&le;25g net)<\/option><option value="lowcarb"'+(p.dietMode==='lowcarb'?' selected':'')+'>Low carb (&le;75g net)<\/option><\/select><\/div>';
+    h+=num('f-netlimit','Net carb limit (g)','netCarbLimit',p.netCarbLimit>0?p.netCarbLimit:'','step="1" min="0" placeholder="auto"');
+    h+=num('f-protfloor','Protein floor (g)','proteinFloorG',p.proteinFloorG,'step="5"'+(p.proteinFloorEnabled?'':' disabled'));
+    h+='<div class="field full checkrow"><label class="checklabel"><input type="checkbox" id="f-protfloor-on" data-field="proteinFloorEnabled" '+(p.proteinFloorEnabled?'checked':'')+'> Use protein floor instead of bodyweight target (optional goal)<\/label><\/div>';
+    h+='<\/div>';
+    h+='<div class="targets-out" id="prof-out">'+planHTML(p)+'<\/div>';
+    h+='<div class="prof-actions"><span id="prof-status" class="prof-status">'+(draft?'Unsaved changes':'Saved')+'<\/span><button type="button" class="btn-ghost" data-action="discard-profile" id="prof-discard"'+(draft?'':' disabled')+'>Discard<\/button><button type="button" class="btn-save" data-action="save-profile" id="prof-save"'+(draft?'':' disabled')+'>Save changes<\/button><\/div>';
+    return h;
+  }
+  function updateProfilePreview(){
+    var p=draft||state.profile, o=$('prof-out'); if(o) o.innerHTML=planHTML(p);
+    var w=$('weeks-val'); if(w) w.textContent=goalWeeksOf(p)+' weeks';
+    ['prof-save','prof-discard'].forEach(function(id){ var b=$(id); if(b) b.disabled=!draft; });
+    var s=$('prof-status'); if(s) s.textContent=draft?'Unsaved changes':'Saved';
+    var pf=$('f-protfloor'); if(pf) pf.disabled=!p.proteinFloorEnabled;
   }
 
   // ---- Personalization from the log ----
@@ -657,7 +811,7 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
 
     var kcal=avg('kcal'), target=t.calorieTarget;
     if(kcal<target*0.75){
-      lines.push('<p>Logged intake averages <b>'+N(kcal)+'<\/b> kcal against a target of <b>'+N(target)+'<\/b>. If that is everything you eat, your deficit is about <b>'+N(t.tdee-kcal)+'<\/b> kcal a day against an estimated maintenance of <b>'+N(t.tdee)+'<\/b>, not '+N(state.profile.deficit)+'. If it is not, something is going unlogged, such as oil, sauces, drinks or snacks.<\/p>');
+      lines.push('<p>Logged intake averages <b>'+N(kcal)+'<\/b> kcal against a target of <b>'+N(target)+'<\/b>. If that is everything you eat, your deficit is about <b>'+N(t.tdee-kcal)+'<\/b> kcal a day against an estimated maintenance of <b>'+N(t.tdee)+'<\/b>, not the planned '+N(t.deficit)+'. If it is not, something is going unlogged, such as oil, sauces, drinks or snacks.<\/p>');
     } else if(kcal>target*1.1){
       lines.push('<p>Logged intake averages <b>'+N(kcal)+'<\/b> kcal, above your target of <b>'+N(target)+'<\/b>.<\/p>');
     } else {
@@ -700,7 +854,227 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
   }
 
   var tab='log', TABS=[['log','Log food'],['totals','Today\'s totals'],['food','Food log'],['history','Your log so far'],['profile','Profile & targets']];
-  function tabsHTML(){ return '<nav class="tabs" role="tablist" aria-label="Sections">'+TABS.map(function(x){ var on=tab===x[0]; return '<button type="button" role="tab" class="tab'+(on?' on':'')+'" aria-selected="'+on+'" data-action="tab" data-tab="'+x[0]+'">'+esc(x[1])+'<\/button>'; }).join('')+'<\/nav>'; }
+  function tabsHTML(){
+    return '<nav class="tabs" role="tablist" aria-label="Sections">'+TABS.map(function(x){
+      var on=tab===x[0];
+      return '<button type="button" role="tab" id="tab-'+x[0]+'" class="tab'+(on?' on':'')+'" aria-selected="'+on+'" aria-controls="panel" tabindex="'+(on?0:-1)+'" data-action="tab" data-tab="'+x[0]+'">'+esc(x[1])+'<\/button>';
+    }).join('')+'<\/nav>';
+  }
+  // ---- Entry editing ----
+  var editingId = null;
+  function foodByName(n){ var all=(state.customFoods||[]).concat(FOODS); for(var i=0;i<all.length;i++){ if(all[i].n===n) return all[i]; } return null; }
+  function num1(v){ var n=parseFloat(v); return isFinite(n) && n>=0 ? R1(n) : 0; }
+  function editFormHTML(e){
+    var food=foodByName(e.name), h='<form class="edit-form" data-action="save-edit" data-id="'+esc(e.id)+'" autocomplete="off">';
+    h+='<div class="edit-title">Edit '+esc(e.name)+'<\/div>';
+    if(food){
+      h+='<div class="field full"><label for="ed-amt">Amount<\/label><input id="ed-amt" type="text" value="'+esc(amountFromPortion(e.portion))+'" autocapitalize="off" spellcheck="false"><span class="ed-hint" id="ed-hint">Change the amount and the numbers below update.<\/span><\/div>';
+    } else {
+      h+='<p class="ed-hint full">This entry isn&rsquo;t linked to a catalog food, so edit its numbers directly.<\/p>';
+    }
+    [['ed-cal','Calories',e.cals],['ed-p','Protein (g)',e.protein],['ed-c','Carbs (g)',e.carbs],['ed-fi','Fiber (g)',e.fiber||0],['ed-f','Fat (g)',e.fat]].forEach(function(x){
+      h+='<div class="field"><label for="'+x[0]+'">'+x[1]+'<\/label><input id="'+x[0]+'" type="number" inputmode="decimal" step="0.1" min="0" value="'+R1(x[2]||0)+'"><\/div>';
+    });
+    h+='<div class="edit-actions full"><button type="button" class="btn-ghost" data-action="cancel-edit">Cancel<\/button><button type="submit" class="btn-save">Save entry<\/button><\/div>';
+    return h+'<\/form>';
+  }
+  function updateEditFromAmount(){
+    var form=document.querySelector('.edit-form'); if(!form) return;
+    var e=(state.days[viewDate]||[]).filter(function(x){ return x.id===form.getAttribute('data-id'); })[0]; if(!e) return;
+    var food=foodByName(e.name), hint=$('ed-hint'), amt=food ? parseAmount($('ed-amt').value, food) : null;
+    if(!amt){ if(hint){ hint.textContent='Amount not understood. Try 179, 6oz, or 2x.'; hint.className='ed-hint bad'; } return; }
+    var m=foodMacros(food, amt.g);
+    $('ed-cal').value=R1(m.cals); $('ed-p').value=R1(m.protein); $('ed-c').value=R1(m.carbs); $('ed-fi').value=R1(m.fiber); $('ed-f').value=R1(m.fat);
+    if(hint){ hint.textContent=amt.label; hint.className='ed-hint'; }
+  }
+
+  // ---- Daily weigh-in and weight trend ----
+  function latestWeight(){ var w=state.weights||{}, k=Object.keys(w).sort(); return k.length ? {d:k[k.length-1], v:w[k[k.length-1]]} : null; }
+  function weighInHTML(){
+    var today=todayStr(), w=state.weights||{}, has=w[today]!=null, last=latestWeight();
+    var h='<section><h2>Daily weigh-in<\/h2><div class="card"><form class="weigh-form" data-action="save-weight" autocomplete="off" novalidate>';
+    h+='<div class="field"><label for="w-today">Today&rsquo;s weight (lb)<\/label><input id="w-today" type="number" inputmode="decimal" step="0.1" min="50" max="1000" value="'+(has?R1(w[today]):'')+'" placeholder="'+(last?R1(last.v):'e.g. 198.4')+'"><\/div>';
+    h+='<button type="submit" class="btn-save">'+(has?'Update':'Save weight')+'<\/button><\/form>';
+    h+='<p class="weigh-note" id="weigh-note">'+(has ? 'Logged today: <b>'+R1(w[today])+' lb<\/b>. Your targets use this weight.'
+      : last ? 'Last weigh-in: <b>'+R1(last.v)+' lb<\/b> on '+esc(prettyDate(last.d))+'. Weigh in at the same time each day, ideally in the morning.'
+      : 'Weigh in at the same time each day, ideally in the morning. Your trend appears under Your log so far.')+'<\/p>';
+    return h+'<\/div><\/section>';
+  }
+  function weightChartHTML(){
+    var w=state.weights||{}, keys=Object.keys(w).sort(), goal=state.profile.goalWeightLb||0;
+    var h='<section><h2>Weight trend<\/h2><div class="card">';
+    if(keys.length<2) return h+'<p class="empty-note">Save your weight on the Log food tab at least twice to see your trend here.<\/p><\/div><\/section>';
+    var cut=shiftDate(todayStr(),-90), pts=keys.filter(function(d){ return d>=cut; });
+    if(pts.length<2) pts=keys.slice(-2);
+    var vals=pts.map(function(d){ return w[d]; }), all=vals.concat(goal>0?[goal]:[]);
+    var lo=Math.floor(Math.min.apply(null,all)-1), hi=Math.ceil(Math.max.apply(null,all)+1);
+    var W=600, H=230, L=46, Rp=14, T=16, B=34, d0=dayNum(pts[0]), span=Math.max(1, dayNum(pts[pts.length-1])-d0);
+    function x(d){ return L+(dayNum(d)-d0)/span*(W-L-Rp); }
+    function y(v){ return T+(hi-v)/(hi-lo)*(H-T-B); }
+    var grid='', ticks=[hi, (hi+lo)/2, lo];
+    ticks.forEach(function(v){ grid+='<line x1="'+L+'" x2="'+(W-Rp)+'" y1="'+y(v).toFixed(1)+'" y2="'+y(v).toFixed(1)+'" class="ch-grid"/><text x="'+(L-8)+'" y="'+(y(v)+4).toFixed(1)+'" class="ch-lab" text-anchor="end">'+R1(v)+'<\/text>'; });
+    var line=pts.map(function(d,i){ return (i?'L':'M')+x(d).toFixed(1)+' '+y(w[d]).toFixed(1); }).join(' ');
+    var dots=pts.map(function(d,i){ var last=i===pts.length-1; return '<circle cx="'+x(d).toFixed(1)+'" cy="'+y(w[d]).toFixed(1)+'" r="'+(last?5:3.5)+'" class="'+(last?'ch-last':'ch-dot')+'"><title>'+esc(prettyDate(d))+': '+R1(w[d])+' lb<\/title><\/circle>'; }).join('');
+    var goalLine = goal>0 ? '<line x1="'+L+'" x2="'+(W-Rp)+'" y1="'+y(goal).toFixed(1)+'" y2="'+y(goal).toFixed(1)+'" class="ch-goal"/><text x="'+(W-Rp)+'" y="'+(y(goal)-6).toFixed(1)+'" class="ch-goal-lab" text-anchor="end">Goal '+R1(goal)+' lb<\/text>' : '';
+    var first=pts[0], lastD=pts[pts.length-1], change=R1(w[lastD]-w[first]);
+    var recent=pts.filter(function(d){ return d>=shiftDate(todayStr(),-28); });
+    var rate = recent.length>=2 ? slopePerDay(recent.map(function(d){ return [dayNum(d), w[d]]; }))*7 : null;
+    var summary='From '+R1(w[first])+' lb on '+prettyDate(first)+' to '+R1(w[lastD])+' lb on '+prettyDate(lastD)+' ('+(change>0?'+':'')+change+' lb).';
+    h+='<svg class="chart" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc('Weight trend. '+summary)+'">'+grid+goalLine+'<path d="'+line+'" class="ch-line"/>'+dots+
+      '<text x="'+L+'" y="'+(H-10)+'" class="ch-lab">'+esc(prettyDate(first))+'<\/text><text x="'+(W-Rp)+'" y="'+(H-10)+'" class="ch-lab" text-anchor="end">'+esc(prettyDate(lastD))+'<\/text><\/svg>';
+    h+='<p class="chart-note">'+esc(summary)+(rate!==null ? ' Over the last 4 weeks your trend is <b>'+(rate>0?'+':'')+R1(rate)+' lb a week<\/b>.' : '')+'<\/p>';
+    return h+'<\/div><\/section>';
+  }
+
+  // ---- 14-day milestone and the target check ----
+  function milestoneHTML(){
+    var n=loggedDays().length;
+    if(n<ADAPT_MIN_LOGGED || state.flags.milestone14) return '';
+    return '<div class="milestone" role="status"><p class="ms-title">14 days logged. Congratulations, keep going.<\/p>' +
+      '<p>Steady logging is what makes your numbers trustworthy. Cutline can now check your targets against your real results.<\/p>' +
+      '<div class="ms-actions"><button type="button" class="btn-save" data-action="ms-review">Check my targets<\/button><button type="button" class="btn-ghost" data-action="ms-dismiss">Keep going<\/button><\/div><\/div>';
+  }
+  function adaptHTML(){
+    var p=state.profile, n=loggedDays().length, h='<section id="adapt"><h2>Target check<\/h2><div class="card adapt">';
+    if(n<ADAPT_MIN_LOGGED){
+      var pct=Math.min(100, n/ADAPT_MIN_LOGGED*100);
+      return h+'<p>Log <b>'+ADAPT_MIN_LOGGED+' days<\/b> and Cutline will compare your targets with your real results. <b>'+n+' of '+ADAPT_MIN_LOGGED+'<\/b> so far.<\/p><div class="bar"><i style="width:'+pct+'%"><\/i><\/div><\/div><\/section>';
+    }
+    var a=adaptiveEstimate(state), t=calcTargets(p);
+    if(!a.ready){
+      return h+'<p>To check your targets, Cutline needs, from the last 4 weeks:<\/p><ul class="checklist">' +
+        '<li class="'+(a.logged>=ADAPT_MIN_DAYS?'ok':'')+'"><b>'+ADAPT_MIN_DAYS+' logged days<\/b> (you have '+a.logged+')<\/li>' +
+        '<li class="'+(a.weighIns>=ADAPT_MIN_WEIGHINS && a.span>=ADAPT_MIN_SPAN?'ok':'')+'"><b>'+ADAPT_MIN_WEIGHINS+' weigh-ins<\/b> spread over at least '+ADAPT_MIN_SPAN+' days (you have '+a.weighIns+(a.weighIns>1?' over '+a.span+' days':'')+')<\/li><\/ul>' +
+        '<p class="plan-fine">Use the daily weigh-in on the Log food tab.<\/p>'+appliedHTML(p)+'<\/div><\/section>';
+    }
+    var c=clampedAdjust(a.estimate, t.formulaTdee), applied=p.tdeeAdjust||0;
+    h+='<p>Over the last 4 weeks you logged <b>'+a.logged+' days<\/b> averaging <b>'+N(a.intake)+'<\/b> kcal, and your weight trend is <b>'+(a.slope*7>0?'+':'')+R1(a.slope*7)+' lb a week<\/b>. That puts your real maintenance near <b>'+N(a.estimate)+'<\/b> kcal, against the formula&rsquo;s <b>'+N(t.formulaTdee)+'<\/b>.<\/p>';
+    if(c.clamped) h+='<p class="plan-warn">That&rsquo;s a big gap, so Cutline only moves maintenance by up to 25% at a time, to <b>'+N(c.value)+'<\/b> kcal. A large gap often means some food went unlogged.<\/p>';
+    h+='<p class="plan-fine">This is only accurate if you logged everything you ate on those days.<\/p>';
+    if(c.adjust!==applied) h+='<div class="ms-actions"><button type="button" class="btn-save" data-action="adapt-apply" data-adj="'+c.adjust+'">Use '+N(c.value)+' kcal as my maintenance<\/button><\/div>';
+    return h+appliedHTML(p)+'<\/div><\/section>';
+  }
+  function appliedHTML(p){
+    if(!p.tdeeAdjust) return '';
+    return '<p class="applied">Maintenance is adjusted by <b>'+(p.tdeeAdjust>0?'+':'')+N(p.tdeeAdjust)+'<\/b> kcal from your results'+(p.tdeeAdjustDate?' (set '+esc(prettyDate(p.tdeeAdjustDate))+')':'')+'. <button type="button" class="linkbtn" data-action="adapt-undo">Undo<\/button><\/p>';
+  }
+
+  // ---- Scan a label (inside Claude) or a barcode (on the web) for custom foods ----
+  var scan = {sample:null, images:false, insideClaude:!!(window.claude && window.claude.use)};
+  function scanLabelText(){ return scan.sample && scan.images ? 'Scan a nutrition label' : 'Scan a barcode'; }
+  function scanHTML(){
+    return '<div class="scan full"><input type="file" id="scan-file" accept="image/*" capture="environment" hidden>' +
+      '<div class="scan-row"><button type="button" class="btn-ghost" data-action="scan-start" id="scan-btn">'+scanLabelText()+'<\/button>' +
+      (scan.insideClaude ? '' : '<button type="button" class="linkbtn" data-action="scan-manual">Type a barcode number<\/button>')+'<\/div>' +
+      '<div class="scan-code" id="scan-code" hidden><label for="scan-num">Barcode number<\/label><div class="scan-row"><input id="scan-num" type="text" inputmode="numeric" autocomplete="off" placeholder="e.g. 0894700010045"><button type="button" class="btn-ghost" data-action="scan-lookup">Look up<\/button><\/div><\/div>' +
+      '<p class="scan-msg" id="scan-msg" role="status" aria-live="polite"><\/p><\/div>';
+  }
+  function scanMsg(t,bad){ var el=$('scan-msg'); if(el){ el.textContent=t; el.className='scan-msg'+(bad?' bad':''); } }
+  function showManualCode(t){ var c=$('scan-code'); if(c) c.hidden=false; if(t) scanMsg(t); var n=$('scan-num'); if(n) n.focus(); }
+  function okNum(v){ var n=parseFloat(v); return isFinite(n) && n>=0 ? R1(n) : ''; }
+  function fillCustom(o){
+    var map={'cf-name':o.name||'','cf-serv':o.serving?okNum(o.serving):'','cf-cal':okNum(o.cal),'cf-protein':okNum(o.protein),'cf-carbs':okNum(o.carbs),'cf-fiber':okNum(o.fiber),'cf-fat':okNum(o.fat)};
+    Object.keys(map).forEach(function(id){ var el=$(id); if(el) el.value=map[id]; });
+    var nm=$('cf-name'); if(nm) nm.focus();
+  }
+  function readLabel(file){
+    scanMsg('Reading the label...');
+    var prompt='You read US nutrition facts labels. Look at the photo and reply with JSON only, no other text: ' +
+      '{"readable": true or false, "name": product name if printed or "", "serving_g": serving size in grams as a number or null if not given in grams, ' +
+      '"calories": number, "protein": grams, "carbs": total carbohydrate grams, "fiber": dietary fiber grams, "fat": total fat grams}. ' +
+      'Use the per-serving column. If the photo is not a readable nutrition label, set readable to false.';
+    scan.sample.json(prompt, {images:[file], modelTier:'default'}).then(function(v){
+      if(!v || v.readable===false || !isFinite(parseFloat(v.calories))){ scanMsg('Couldn\'t read a nutrition label in that photo. Try again with the label flat, well lit and in focus.', true); return; }
+      fillCustom({name:v.name, serving:v.serving_g, cal:v.calories, protein:v.protein, carbs:v.carbs, fiber:v.fiber, fat:v.fat});
+      scanMsg((v.serving_g?'':'The label didn\'t give a serving weight in grams, so enter it. ')+'Check these numbers against the label, then press Save custom food.');
+    }, function(err){
+      if(err && err.code==='not_granted'){ scan.sample=null; var b=$('scan-btn'); if(b) b.textContent=scanLabelText(); scanMsg('Label reading isn\'t allowed here. Enter the numbers by hand.', true); }
+      else if(err && err.code==='rate_limited') scanMsg('Too many scans for now. Try again in a minute.', true);
+      else scanMsg('Couldn\'t read the label right now. Enter the numbers by hand.', true);
+    });
+  }
+  function readBarcode(file){
+    if(!('BarcodeDetector' in window)){ showManualCode('This browser can\'t read barcodes from photos. Type the number under the barcode.'); return; }
+    scanMsg('Looking for a barcode...');
+    var det;
+    try{ det=new window.BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e']}); }catch(e){ showManualCode('This browser can\'t read barcodes from photos. Type the number under the barcode.'); return; }
+    createImageBitmap(file).then(function(bmp){ return det.detect(bmp); }).then(function(codes){
+      if(codes && codes.length) lookupBarcode(String(codes[0].rawValue));
+      else showManualCode('No barcode found in that photo. Type the number under the barcode instead.');
+    }, function(){ showManualCode('Couldn\'t read that photo. Type the number under the barcode instead.'); });
+  }
+  function offNumber(n, key){ var v=parseFloat(n[key]); return isFinite(v) ? v : null; }
+  function lookupBarcode(code){
+    code=String(code||'').replace(/\D/g,'');
+    if(!/^\d{8,14}$/.test(code)){ scanMsg('A barcode number has 8 to 14 digits.', true); return; }
+    if(scan.insideClaude){ scanMsg('Product lookup isn\'t available inside Claude. Scan the nutrition label instead.', true); return; }
+    scanMsg('Looking up '+code+'...');
+    fetch('https://world.openfoodfacts.org/api/v2/product/'+code+'.json?fields=product_name,brands,nutriments,serving_quantity')
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if(!d || d.status!==1 || !d.product){ showManualCode(); scanMsg('Barcode '+code+' isn\'t in Open Food Facts yet. Enter the label numbers by hand.', true); return; }
+        var pr=d.product, n=pr.nutriments||{}, kcal=offNumber(n,'energy-kcal_100g');
+        if(kcal===null && offNumber(n,'energy_100g')!==null) kcal=offNumber(n,'energy_100g')/4.184;
+        if(kcal===null){ scanMsg('Found '+(pr.product_name||'the product')+', but it has no calorie data. Enter the label numbers by hand.', true); return; }
+        var serv=parseFloat(pr.serving_quantity); if(!(serv>0)) serv=100; var k=serv/100;
+        var name=[pr.brands?String(pr.brands).split(',')[0].trim():'', pr.product_name||''].filter(Boolean).join(' ');
+        fillCustom({name:name, serving:serv, cal:kcal*k, protein:(offNumber(n,'proteins_100g')||0)*k, carbs:(offNumber(n,'carbohydrates_100g')||0)*k, fiber:(offNumber(n,'fiber_100g')||0)*k, fat:(offNumber(n,'fat_100g')||0)*k});
+        scanMsg('Found '+(name||'the product')+'. Open Food Facts is crowd-sourced, so check the numbers against your package, then press Save custom food.');
+      }, function(){ scanMsg('Couldn\'t reach Open Food Facts. Check your connection or enter the numbers by hand.', true); });
+  }
+
+  // ---- Backup: export and import ----
+  var downloadsApi=null, pendingImport=null;
+  function backupHTML(){
+    var h='<section><h2>Backup<\/h2><div class="card backup"><p>Save a copy of your whole log as a file, or restore one.<\/p><div class="ms-actions">' +
+      '<button type="button" class="btn-ghost" data-action="export">Export backup<\/button><button type="button" class="btn-ghost" data-action="import-start">Import backup<\/button>' +
+      '<input type="file" id="import-file" accept="application/json,.json" hidden><\/div>';
+    if(pendingImport){
+      h+='<div class="import-confirm"><p>Replace your current log (<b>'+loggedDays().length+' days<\/b>) with the backup from <b>'+esc(pendingImport.when)+'<\/b> (<b>'+pendingImport.days+' days<\/b>)? This can&rsquo;t be undone.<\/p><div class="ms-actions"><button type="button" class="btn-save" data-action="import-confirm">Replace my log<\/button><button type="button" class="btn-ghost" data-action="import-cancel">Cancel<\/button><\/div><\/div>';
+    }
+    return h+'<p class="backup-msg" id="backup-msg" role="status" aria-live="polite"><\/p><\/div><\/section>';
+  }
+  function backupMsg(t,bad){ var el=$('backup-msg'); if(el){ el.textContent=t; el.className='backup-msg'+(bad?' bad':''); } }
+  function exportBackup(){
+    var json=JSON.stringify({app:'cutline', version:2, exported:new Date().toISOString(), state:{profile:state.profile, customFoods:state.customFoods, weights:state.weights, flags:state.flags, days:state.days}}, null, 1);
+    var name='cutline-backup-'+todayStr()+'.json';
+    if(downloadsApi){
+      downloadsApi.save({filename:name, data:json}).then(function(){ backupMsg('Backup saved as '+name+'.'); }, function(){ copyBackup(json); });
+    } else if(!scan.insideClaude){
+      try{ var a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([json],{type:'application/json'})); a.download=name; document.body.appendChild(a); a.click(); a.remove(); backupMsg('Backup downloaded as '+name+'.'); }
+      catch(e){ copyBackup(json); }
+    } else copyBackup(json);
+  }
+  function copyBackup(json){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(json).then(function(){ backupMsg('Downloads aren\'t available here, so the backup was copied. Paste it into a note or file to keep it.'); }, function(){ backupMsg('Couldn\'t save or copy the backup here.', true); });
+    } else backupMsg('Couldn\'t save or copy the backup here.', true);
+  }
+  function cleanDays(days){
+    var out={};
+    Object.keys(days||{}).forEach(function(d){
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(d) || !Array.isArray(days[d])) return;
+      out[d]=days[d].filter(function(e){ return e && typeof e.name==='string' && isFinite(parseFloat(e.cals)); }).map(function(e){
+        return {id:String(e.id||('e'+Math.random().toString(36).slice(2,10))), name:e.name, portion:String(e.portion||''), cals:num1(e.cals), protein:num1(e.protein), carbs:num1(e.carbs), fiber:num1(e.fiber), fat:num1(e.fat)};
+      });
+    });
+    return out;
+  }
+  function readImport(file){
+    var fr=new FileReader();
+    fr.onload=function(){
+      try{
+        var b=JSON.parse(fr.result), s=b && b.state;
+        if(!b || b.app!=='cutline' || !s || !s.profile || typeof s.days!=='object') throw new Error('not a Cutline backup');
+        var days=cleanDays(s.days), n=Object.keys(days).filter(function(d){ return days[d].length; }).length;
+        pendingImport={state:{profile:s.profile, customFoods:Array.isArray(s.customFoods)?s.customFoods:[], weights:(s.weights&&typeof s.weights==='object')?s.weights:{}, flags:s.flags||{}, days:days}, days:n, when:b.exported?prettyDate(String(b.exported).slice(0,10)):'an unknown date'};
+        render();
+      }catch(e){ backupMsg('That file isn\'t a Cutline backup.', true); }
+    };
+    fr.onerror=function(){ backupMsg('Couldn\'t read that file.', true); };
+    fr.readAsText(file);
+  }
+
   var openState = {'cf-wrap':false,'prof-wrap':true};
   document.addEventListener('toggle', function(ev){ if(ev.target && ev.target.id in openState) openState[ev.target.id]=ev.target.open; }, true);
 
@@ -716,7 +1090,8 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
     var usual = usualFoods();
 
     var html = '';
-    html += tabsHTML();
+    html += tabsHTML() + saveStateHTML();
+    html += '<div role="tabpanel" id="panel" aria-labelledby="tab-'+tab+'" tabindex="0">';
     if(tab==='log' || tab==='totals' || tab==='food'){
     html += '<div class="hero">';
     html += '<div class="hero-top"><span class="brand">Cutline<\/span>' +
@@ -734,6 +1109,7 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
     }
 
     if(tab==='log'){
+    html += milestoneHTML() + weighInHTML();
     html += '<section><h2>Log food<\/h2><div class="card"><form class="addform logform" data-action="add-entry" autocomplete="off">' +
       '<div class="field"><label for="f-food">Food<\/label><input id="f-food" type="text" placeholder="chicken breast" autocomplete="off" autocapitalize="off" spellcheck="false"><\/div>' +
       '<div class="field"><label for="f-amt">Amount<\/label><input id="f-amt" type="text" inputmode="text" placeholder="179 or 6oz" autocomplete="off" autocapitalize="off" spellcheck="false"><\/div>';
@@ -746,7 +1122,7 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
       '<button type="submit">Log it<\/button>' +
       '<\/form>' +
       '<details id="cf-wrap" style="margin-top:14px"'+(openState['cf-wrap']?' open':'')+'><summary style="cursor:pointer;font-size:12.5px;color:var(--text-muted)">Custom foods (from a label)<\/summary>' +
-      '<form class="addform custom" data-action="add-custom">' +
+      '<form class="addform custom" data-action="add-custom">' + scanHTML() +
       '<div class="field"><label for="cf-name">Name<\/label><input id="cf-name" name="name" type="text" required><\/div>' +
       '<div class="field"><label for="cf-serv">Serving size (g)<\/label><input id="cf-serv" name="serving" type="number" step="0.1" min="1" value="100" required><\/div>' +
       '<div class="field"><label for="cf-cal">Calories per serving<\/label><input id="cf-cal" name="cal" type="number" step="1" required><\/div>' +
@@ -780,11 +1156,13 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
       html += '<div class="empty card">Nothing logged for this day yet.<\/div>';
     } else {
       entries.forEach(function(e){
+        if(e.id===editingId){ html += '<div class="entry editing">'+editFormHTML(e)+'<\/div>'; return; }
         var netC = e.carbs-(e.fiber||0);
         html += '<div class="entry"><div class="info"><div class="name">'+esc(e.name)+'<\/div>' +
           (e.portion?'<div class="portion">'+esc(e.portion)+'<\/div>':'') +
           '<div class="macros">'+R(e.cals)+' kcal &middot; P'+R1(e.protein)+'g &middot; C'+R1(e.carbs)+'g (net '+R1(netC)+'g) &middot; F'+R1(e.fat)+'g<\/div>' +
-          '<\/div><button class="del" data-action="del-entry" data-id="'+esc(e.id)+'" aria-label="Remove entry">&times;<\/button><\/div>';
+          '<\/div><button type="button" class="edit" data-action="edit-entry" data-id="'+esc(e.id)+'" aria-label="Edit '+esc(e.name)+'">Edit<\/button>' +
+          '<button type="button" class="del" data-action="del-entry" data-id="'+esc(e.id)+'" aria-label="Remove '+esc(e.name)+'">&times;<\/button><\/div>';
       });
     }
     html += '<\/div><\/section>';
@@ -792,42 +1170,158 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
     }
     if(tab==='history'){
     html += '<section><h2>Your log so far<\/h2><div class="card"><div class="insights">'+insightsHTML(t)+'<\/div>'+historyHTML(t, viewDate)+'<\/div><\/section>';
+    html += adaptHTML() + weightChartHTML();
 
     }
     if(tab==='profile'){
     html += '<section><h2>Profile &amp; targets<\/h2><div class="card">';
     html += profileHTML();
     html += '<\/div><\/section>';
+    html += backupHTML();
     }
 
+    html += '<\/div>';
     html += '<div class="foot-note">Targets use the Mifflin-St Jeor formula. Food values are typical averages per 100g, cooked weight unless the name says raw. Brand items use the label for one serving. Recipes change, so check your package, and use a custom food for anything missing. Restaurant items use each chain&rsquo;s published numbers for one item, so log them by count. Fiber counts as 0 where a chain does not list it. Your log is private to you: it saves to your Claude account when you are signed in, and to this browser otherwise.<\/div>';
 
     return html;
   }
 
-  // Round-trip safe: this function must not contain the two-character closing-tag sequence outside string literals, so the page can re-save itself.
-  function buildFullDocument(currentState){
-    var stateJSON = JSON.stringify(currentState).split(String.fromCharCode(60)).join('\\u003c');
-    var src = boot.toString().replace(/<\//g,'<\\/');
-    var body = '<title>Cutline<\/title>' +
-      '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&family=IBM+Plex+Mono:wght@500;600&display=swap">' +
-      '<div id="app-root"><\/div>' +
-      '<' + 'script id="state-data" type="application/json">' + stateJSON + '<' + '/script>' +
-      '<' + 'script>(' + src + ')(JSON.parse(document.getElementById(\'state-data\').textContent));<' + '/script>';
-    return '<!doctype html><html><head><meta charset="utf8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>' + HEAD_RESET + '<\/style><\/head><body>' + body + '<\/body><\/html>';
+  // ---- Startup state ----
+  var LOCAL_KEY='cutline_v2', LEGACY_LOCAL_KEYS=['cutline_share_v1'];  // must be set before the first readLocal()
+  function normalize(){ state.profile=state.profile||{}; state.customFoods=state.customFoods||[]; state.weights=state.weights||{}; state.days=state.days||{}; state.flags=state.flags||{}; }
+  function adopt(s){ if(!s || !s.profile) return false; state.profile=s.profile; state.customFoods=s.customFoods||[]; state.weights=s.weights||{}; state.days=s.days||{}; state.flags=s.flags||{}; normalize(); return true; }
+  normalize();
+  (function(){ var loc=readLocal(); if(loc) adopt(loc); })();
+  var viewDate = todayStr(), lastToday = viewDate;
+  function ensureDay(){ if(!state.days[viewDate]) state.days[viewDate]=[]; }
+  // The goal timeline counts from goalStart; older saves don't have one, so it starts today.
+  function migrateProfile(){ if(!state.profile.goalStart){ state.profile.goalStart=todayStr(); if(!(state.profile.goalWeeks>=GOAL_MIN_WEEKS)) state.profile.goalWeeks=goalWeeksOf(state.profile); return true; } return false; }
+
+  // Day rollover: when the page stays open past midnight, "today" follows the clock.
+  function checkDay(){
+    var t=todayStr(); if(t===lastToday) return false;
+    if(viewDate===lastToday) viewDate=t;
+    lastToday=t; ensureDay(); render(); return true;
+  }
+  document.addEventListener('visibilitychange', function(){ if(!document.hidden) checkDay(); });
+  window.addEventListener('focus', checkDay);
+  setInterval(checkDay, 60000);
+
+  // ---- Storage ----
+  // Each person's log saves to their own Claude account when the page runs inside Claude (a private
+  // per-person database), and always to this browser as a backup. The account copy is a small "main"
+  // document plus one document per month, so a save writes only what changed, never the whole page.
+  var store={mode:'local', col:null, writing:false, pendingMain:false, pendingMonths:{}, failures:0, retry:null, touched:false, status:{kind:'', msg:''}};
+  function readLocal(){
+    var keys=[LOCAL_KEY].concat(LEGACY_LOCAL_KEYS);
+    for(var i=0;i<keys.length;i++){ try{ var v=JSON.parse(localStorage.getItem(keys[i])||'null'); if(v && v.profile) return v; }catch(e){} }
+    return null;
+  }
+  function writeLocal(){ try{ localStorage.setItem(LOCAL_KEY, JSON.stringify(state)); return true; }catch(e){ return false; } }
+  function monthOf(d){ return String(d).slice(0,7); }
+  function monthsWithEntries(s){ var m={}; Object.keys(s.days||{}).forEach(function(d){ if((s.days[d]||[]).length) m[monthOf(d)]=1; }); return Object.keys(m).sort(); }
+  function mainDoc(){ return {json:JSON.stringify({v:2, profile:state.profile, customFoods:state.customFoods, weights:state.weights, flags:state.flags, months:monthsWithEntries(state)}), updated:Date.now()}; }
+  function monthDoc(mo){ var days={}; Object.keys(state.days).forEach(function(d){ if(monthOf(d)===mo && (state.days[d]||[]).length) days[d]=state.days[d]; }); return {json:JSON.stringify(days), updated:Date.now()}; }
+  function snapJSON(snap){ var v=snap && typeof snap.data==='function' ? snap.data() : snap; return (v && typeof v.json==='string') ? JSON.parse(v.json) : null; }
+  function setStatus(kind,msg){ store.status={kind:kind,msg:msg}; var el=$('save-state'); if(el){ el.className='save-state '+kind; el.textContent=msg; } }
+  function saveStateHTML(){ return '<p class="save-state '+store.status.kind+'" id="save-state" role="status" aria-live="polite">'+esc(store.status.msg)+'<\/p>'; }
+  function queueAll(){ store.pendingMain=true; monthsWithEntries(state).forEach(function(mo){ store.pendingMonths[mo]=1; }); }
+
+  function flush(){
+    if(store.mode!=='db' || store.writing) return;
+    var months=Object.keys(store.pendingMonths), doMain=store.pendingMain;
+    if(!doMain && !months.length) return;
+    store.writing=true; store.pendingMain=false; store.pendingMonths={};
+    setStatus('saving','Saving...');
+    var jobs=months.map(function(mo){ return store.col.doc('m-'+mo).set(monthDoc(mo)); });
+    if(doMain) jobs.push(store.col.doc('main').set(mainDoc()));
+    Promise.all(jobs).then(function(){
+      store.writing=false; store.failures=0;
+      setStatus('ok','Saved to your Claude account');
+      flush();
+    }, function(err){
+      store.writing=false; store.failures++;
+      if(doMain) store.pendingMain=true;
+      months.forEach(function(mo){ store.pendingMonths[mo]=1; });
+      console.warn('Cutline: save failed', err);
+      setStatus('error', store.failures<=5 ? 'Couldn\'t save to your Claude account. Your entries are kept on this device, and Cutline will retry.' : 'Still can\'t save to your Claude account. Your entries are kept on this device. Export a backup from Profile & targets to be safe.');
+      clearTimeout(store.retry);
+      if(store.failures<=5) store.retry=setTimeout(flush, Math.min(60000, 2000*Math.pow(2, store.failures-1)));
+    });
   }
 
-  if(!state.customFoods) state.customFoods=[];
-  if(!state.weights) state.weights={};
-  var viewDate = todayStr();
-  var KEY = 'cutline_share_v1';
-  function adopt(s){ if(!s || !s.profile) return; state.profile=s.profile; state.customFoods=s.customFoods||[]; state.weights=s.weights||{}; state.days=s.days||{}; }
-  try{ adopt(JSON.parse(localStorage.getItem(KEY)||'null')); }catch(e){}
-  if(!state.days[viewDate]) state.days[viewDate] = [];
+  // ch.dates: days whose entries changed. The small main document is saved every time.
+  function persist(ch){
+    ch=ch||{};
+    store.touched=true;
+    render();
+    var okLocal=writeLocal();
+    if(store.mode==='db'){
+      store.pendingMain=true;
+      (ch.dates||[]).forEach(function(d){ store.pendingMonths[monthOf(d)]=1; });
+      flush();
+    } else {
+      setStatus(okLocal?'ok':'error', okLocal ? 'Saved on this device' : 'Couldn\'t save on this device. Export a backup from Profile & targets.');
+    }
+  }
 
-  var styleEl = $('app-style');
-  if(!styleEl){ styleEl = document.createElement('style'); styleEl.id='app-style'; document.head.appendChild(styleEl); }
-  styleEl.textContent = CSS;
+  // Entries typed before the account copy finished loading are merged in, never dropped.
+  function mergeLocalInto(remote){
+    Object.keys(state.days).forEach(function(d){
+      var ids={}; (remote.days[d]||[]).forEach(function(e){ ids[e.id]=1; });
+      var extra=(state.days[d]||[]).filter(function(e){ return !ids[e.id]; });
+      if(extra.length) remote.days[d]=(remote.days[d]||[]).concat(extra);
+    });
+    Object.keys(state.weights).forEach(function(d){ if(remote.weights[d]==null) remote.weights[d]=state.weights[d]; });
+    return remote;
+  }
+
+  function loadAccount(){
+    if(!(window.claude && window.claude.use)) return Promise.resolve(null);
+    return Promise.all([window.claude.use('db'), window.claude.use('user')]).then(function(r){
+      var db=r[0], user=r[1];
+      if(!db || !user) return null;
+      return user.id().then(function(id){
+        if(!id) return null;
+        store.col=db.collection('data/users/'+id);
+        return store.col.doc('main').get().then(function(snap){
+          var main=snapJSON(snap);
+          if(main){
+            return Promise.all((main.months||[]).map(function(mo){ return store.col.doc('m-'+mo).get().then(snapJSON); })).then(function(parts){
+              var days={}; parts.forEach(function(p){ if(p) Object.keys(p).forEach(function(d){ days[d]=p[d]; }); });
+              return {layout:2, state:{profile:main.profile, customFoods:main.customFoods||[], weights:main.weights||{}, flags:main.flags||{}, days:days}};
+            });
+          }
+          // First version of the shared copy kept everything in one document.
+          return store.col.doc('cutline').get().then(function(old){ return {layout:1, state:snapJSON(old)}; });
+        });
+      });
+    });
+  }
+
+  function startStorage(){
+    loadAccount().then(function(res){
+      if(!res){ setStatus('ok', scan.insideClaude ? 'Saved on this device' : 'Saved on this device. Export a backup now and then from Profile & targets.'); return; }
+      store.mode='db';
+      var remote=res.state;
+      if(remote && remote.profile){
+        remote.days=remote.days||{}; remote.weights=remote.weights||{};
+        adopt(store.touched ? mergeLocalInto(remote) : remote);
+      }
+      // Anything not yet in the per-month layout (a first visit, an older save, or this page's built-in data) is copied up.
+      if(res.layout!==2 || !remote || store.touched) queueAll();
+      if(migrateProfile()) store.pendingMain=true;
+      ensureDay(); writeLocal(); render();
+      if(store.pendingMain || Object.keys(store.pendingMonths).length) flush();
+      else setStatus('ok','Saved to your Claude account');
+    }).catch(function(err){
+      console.warn('Cutline: account storage unavailable', err);
+      setStatus('error','Couldn\'t reach your Claude account, so this visit saves on this device only.');
+    });
+  }
+
+  if(migrateProfile()) writeLocal();
+  ensureDay();
 
   function updatePreview(){
     var box=$('pv'); if(!box) return;
@@ -863,62 +1357,37 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
 
   function render(){
     $('app-root').innerHTML = renderApp(state, viewDate);
+    var sd=$('s-date'); if(sd) sd.textContent=new Date().toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
     updatePreview();
-  }
-
-  // Each viewer gets a private copy: data/users/<id>/ in the artifact db, plus this browser as a fallback.
-  var dbRef = null, writing = false, dirty = false, touched = false;
-  function saveRemote(){
-    if(!dbRef) return;
-    if(writing){ dirty = true; return; }
-    writing = true;
-    dbRef.set({json: JSON.stringify(state), updated: Date.now()})
-      .catch(function(err){ console.warn('Cutline: save failed', err); })
-      .then(function(){ writing = false; if(dirty){ dirty = false; saveRemote(); } });
-  }
-  if(window.claude && window.claude.use){
-    Promise.all([window.claude.use('db'), window.claude.use('user')]).then(function(r){
-      var db = r[0], user = r[1];
-      if(!db || !user) return;
-      return user.id().then(function(id){
-        if(!id) return;
-        var ref = db.collection('data/users/' + id).doc('cutline');
-        return ref.get().then(function(snap){
-          var v = snap && typeof snap.data === 'function' ? snap.data() : snap;
-          dbRef = ref;
-          if(v && v.json && !touched){
-            adopt(JSON.parse(v.json));
-            if(!state.days[viewDate]) state.days[viewDate] = [];
-            try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
-            render();
-          } else if(touched || Object.keys(state.days).some(function(d){ return state.days[d].length; })){
-            saveRemote();
-          }
-        });
-      });
-    }).catch(function(err){ console.warn('Cutline: account storage unavailable', err); });
-  }
-
-  function persist(){
-    touched = true;
-    render();
-    try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
-    saveRemote();
   }
 
   document.addEventListener('input', function(ev){
     if(ev.target && (ev.target.id==='f-food' || ev.target.id==='f-amt')) updatePreview();
+    if(ev.target && ev.target.id==='ed-amt') updateEditFromAmount();
   });
 
   document.addEventListener('click', function(ev){
     var t = ev.target.closest('[data-action]');
     if(!t) return;
     var action = t.getAttribute('data-action');
-    if(action==='tab'){ tab=t.getAttribute('data-tab')||'log'; render(); window.scrollTo(0,0); return; }
+    if(action==='tab'){ tab=t.getAttribute('data-tab')||'log'; editingId=null; render(); window.scrollTo(0,0); return; }
+    if(action==='edit-entry'){ editingId=t.getAttribute('data-id'); render(); var ea=$('ed-amt')||$('ed-cal'); if(ea) ea.focus(); return; }
+    if(action==='cancel-edit'){ editingId=null; render(); return; }
+    if(action==='ms-dismiss' || action==='ms-review'){ state.flags.milestone14=todayStr(); if(action==='ms-review') tab='history'; persist(); if(action==='ms-review'){ var ad=$('adapt'); if(ad) ad.scrollIntoView(); } return; }
+    if(action==='adapt-apply'){ var adj=parseInt(t.getAttribute('data-adj'),10); if(isFinite(adj)){ state.profile.tdeeAdjust=adj; state.profile.tdeeAdjustDate=todayStr(); if(draft){ draft.tdeeAdjust=adj; draft.tdeeAdjustDate=state.profile.tdeeAdjustDate; } persist(); } return; }
+    if(action==='adapt-undo'){ delete state.profile.tdeeAdjust; delete state.profile.tdeeAdjustDate; if(draft){ delete draft.tdeeAdjust; delete draft.tdeeAdjustDate; } persist(); return; }
+    if(action==='scan-start'){ if(!(scan.sample && scan.images) && !('BarcodeDetector' in window)){ showManualCode(scan.insideClaude ? 'Scanning isn\'t available here. Enter the label numbers by hand.' : 'This browser can\'t read barcodes from photos. Type the number under the barcode.'); return; } var f=$('scan-file'); if(f){ f.value=''; f.click(); } return; }
+    if(action==='scan-manual'){ showManualCode('Type the number printed under the barcode.'); return; }
+    if(action==='scan-lookup'){ lookupBarcode(($('scan-num')||{}).value); return; }
+    if(action==='export'){ exportBackup(); return; }
+    if(action==='import-start'){ var fi=$('import-file'); if(fi){ fi.value=''; fi.click(); } return; }
+    if(action==='import-cancel'){ pendingImport=null; render(); return; }
+    if(action==='import-confirm'){ if(!pendingImport) return; var ns=pendingImport.state; pendingImport=null; adopt(ns); migrateProfile(); draft=null; editingId=null; ensureDay(); queueAll(); persist(); backupMsg('Backup restored.'); return; }
     if(action==='save-profile'){
       if(!draft) return;
       var oldW=state.profile.weightLb;
       if(!(draft.goalWeeks>=GOAL_MIN_WEEKS)) draft.goalWeeks=goalWeeksOf(draft);
+      if(!draft.goalStart) draft.goalStart=todayStr();
       state.profile=draft; draft=null;
       if(state.profile.weightLb>0 && state.profile.weightLb!==oldW) state.weights[todayStr()]=state.profile.weightLb;
       persist();
@@ -937,7 +1406,8 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
     else if(action==='del-entry'){
       var id = t.getAttribute('data-id');
       state.days[viewDate] = (state.days[viewDate]||[]).filter(function(e){ return e.id!==id; });
-      persist();
+      if(editingId===id) editingId=null;
+      persist({dates:[viewDate]});
     }
     else if(action==='del-custom'){
       var i = parseInt(t.getAttribute('data-i'),10);
@@ -965,8 +1435,23 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
     else if(field==='age') d.age=t.value?parseInt(t.value,10):null;
     else if(field==='goalWeeks') d.goalWeeks=parseInt(t.value,10);
     else d[field]=parseFloat(t.value)||0;
+    if(field==='goalWeeks' || field==='goalWeightLb') d.goalStart=todayStr();
     updateProfilePreview();
   }
+  document.addEventListener('change', function(ev){
+    var el=ev.target; if(!el || !el.files || !el.files[0]) return;
+    if(el.id==='scan-file'){ if(scan.sample && scan.images) readLabel(el.files[0]); else readBarcode(el.files[0]); }
+    if(el.id==='import-file') readImport(el.files[0]);
+  });
+  // Tabs: arrow keys, Home and End move between tabs (WAI-ARIA tabs pattern).
+  document.addEventListener('keydown', function(ev){
+    var el=ev.target; if(!el || !el.classList || !el.classList.contains('tab')) return;
+    var ids=TABS.map(function(x){ return x[0]; }), i=ids.indexOf(tab), k=ev.key, next=null;
+    if(k==='ArrowRight') next=ids[(i+1)%ids.length]; else if(k==='ArrowLeft') next=ids[(i-1+ids.length)%ids.length];
+    else if(k==='Home') next=ids[0]; else if(k==='End') next=ids[ids.length-1];
+    if(!next) return;
+    ev.preventDefault(); tab=next; editingId=null; render(); var nb=$('tab-'+next); if(nb) nb.focus();
+  });
   document.addEventListener('input', onProfileEdit);
   document.addEventListener('change', onProfileEdit);
 
@@ -974,8 +1459,31 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
     var form = ev.target.closest('[data-action]');
     if(!form) return;
     var action = form.getAttribute('data-action');
+    if(action==='save-weight'){
+      ev.preventDefault();
+      checkDay();
+      var wv=parseFloat(($('w-today')||{}).value), wn=$('weigh-note');
+      if(!(wv>=50 && wv<=1000)){ if(wn){ wn.textContent='Enter your weight in pounds, between 50 and 1,000.'; wn.className='weigh-note bad'; } return; }
+      wv=R1(wv); state.weights[todayStr()]=wv;
+      var lw=latestWeight(); if(lw && lw.d===todayStr()){ state.profile.weightLb=wv; if(draft) draft.weightLb=wv; }
+      persist();
+      return;
+    }
+    if(action==='save-edit'){
+      ev.preventDefault();
+      var eid=form.getAttribute('data-id'), list=state.days[viewDate]||[], ent=list.filter(function(x){ return x.id===eid; })[0];
+      if(!ent){ editingId=null; render(); return; }
+      var efood=foodByName(ent.name), eamt=(efood && $('ed-amt')) ? parseAmount($('ed-amt').value, efood) : null;
+      if(efood && $('ed-amt') && $('ed-amt').value.trim() && !eamt){ updateEditFromAmount(); return; }
+      if(eamt) ent.portion=eamt.label;
+      ent.cals=num1($('ed-cal').value); ent.protein=num1($('ed-p').value); ent.carbs=num1($('ed-c').value); ent.fiber=num1($('ed-fi').value); ent.fat=num1($('ed-f').value);
+      editingId=null;
+      persist({dates:[viewDate]});
+      return;
+    }
     if(action==='add-entry'){
       ev.preventDefault();
+      checkDay();
       var food = findFoods($('f-food').value)[0];
       if(!food){ updatePreview(); return; }
       if(!$('f-amt').value.trim()){ $('f-amt').focus(); updatePreview(); return; }
@@ -988,7 +1496,7 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
         name: food.n, portion: amt.label,
         cals: R1(mac.cals), protein: R1(mac.protein), carbs: R1(mac.carbs), fiber: R1(mac.fiber), fat: R1(mac.fat)
       });
-      persist();
+      persist({dates:[viewDate]});
       $('f-food').focus();
     }
     else if(action==='add-custom'){
@@ -1006,4 +1514,13 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
   });
 
   render();
-})(JSON.parse(document.getElementById('state-data').textContent));</script></body></html>
+  startStorage();
+  if(scan.insideClaude){
+    window.claude.use('sample').then(function(sm){ if(!sm) return; scan.sample=sm; return (sm.limits ? sm.limits() : Promise.resolve({})).then(function(l){ scan.images=!!(l && l.images); var b=$('scan-btn'); if(b) b.textContent=scanLabelText(); }); }).catch(function(){});
+    window.claude.use('downloads').then(function(d){ downloadsApi=d||null; }).catch(function(){});
+  }
+
+})();
+</script>
+</body>
+</html>

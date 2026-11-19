@@ -1,1 +1,5 @@
 .DS_Store
+node_modules/
+# Personal logs and seeded builds never go in the repo
+*.seed.json
+*-seeded.html

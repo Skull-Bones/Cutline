@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Cutline Food Tracker</title>
+{{HEAD_META}}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>:root{color-scheme:dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,-apple-system,sans-serif;background:#000;color:#fff}img{max-width:100%}[hidden]{display:none!important}</style>
+<style id="site-style">
+:root{
+  --s-bg:#FAF9F5; --s-panel:#F0EEE6; --s-ink:#141413; --s-muted:#5E5D59; --s-line:#E6E3DA; --s-clay:#C96442;
+  --s-band:#141413; --s-band-text:#F0EEE6; --s-band-muted:#A9A69C;
+  --f-display:"DM Sans",system-ui,-apple-system,sans-serif; --f-serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+  /* layout: one 1120px column; editorial sections stacked, tracker as a two-column panel */
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--s-bg:#141413;--s-panel:#1E1D1B;--s-ink:#F0EEE6;--s-muted:#A9A69C;--s-line:#34332F;--s-clay:#E0896A;--s-band:#F0EEE6;--s-band-text:#141413;--s-band-muted:#5E5D59;color-scheme:dark}}
+:root[data-theme="dark"]{--s-bg:#141413;--s-panel:#1E1D1B;--s-ink:#F0EEE6;--s-muted:#A9A69C;--s-line:#34332F;--s-clay:#E0896A;--s-band:#F0EEE6;--s-band-text:#141413;--s-band-muted:#5E5D59;color-scheme:dark}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{background:var(--s-bg);color:var(--s-ink);font-family:var(--f-display);-webkit-font-smoothing:antialiased}
+.s-wrap{max-width:1120px;margin:0 auto;padding-inline:24px}
+.s-head{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--s-bg) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--s-line)}
+.s-head .s-wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;height:64px}
+.s-logo{display:flex;align-items:center;gap:9px;color:var(--s-ink);text-decoration:none;font-weight:600;font-size:19px;letter-spacing:-.3px}
+.s-logo svg{width:22px;height:22px;flex:none}
+.s-nav{display:flex;align-items:center;gap:28px}
+.s-nav a:not(.s-btn){color:var(--s-ink);text-decoration:none;font-size:15px}
+.s-nav a:not(.s-btn):hover{color:var(--s-muted)}
+.s-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;padding:11px 20px;font:500 15px/1 var(--f-display);text-decoration:none;border:1px solid var(--s-ink);transition:background .15s,color .15s}
+.s-btn-dark{background:var(--s-ink);color:var(--s-bg)}
+.s-btn-dark:hover{background:transparent;color:var(--s-ink)}
+.s-btn-line{background:transparent;color:var(--s-ink)}
+.s-btn-line:hover{background:var(--s-ink);color:var(--s-bg)}
+.s-nav .s-btn{padding:9px 16px;font-size:14px}
+a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-offset:3px;border-radius:6px}
+.s-hero{padding-block:88px 72px}
+.s-hero h1{font-weight:500;font-size:clamp(40px,7vw,80px);line-height:1.02;letter-spacing:-.035em;margin:0;max-width:13ch;text-wrap:balance}
+.s-hero p{font-family:var(--f-serif);font-size:clamp(18px,2.1vw,22px);line-height:1.5;color:var(--s-muted);max-width:36em;margin:28px 0 0}
+.s-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:36px}
+.s-facts{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--s-line);margin-top:72px}
+.s-facts div{padding:20px 20px 0 0;display:flex;flex-direction:column;gap:6px}
+.s-facts div+div{padding-left:20px;border-left:1px solid var(--s-line)}
+.s-facts b{font-weight:500;font-size:28px;letter-spacing:-.6px;font-variant-numeric:tabular-nums}
+.s-facts span{font-size:14px;color:var(--s-muted);line-height:1.45}
+.s-sec{padding-block:80px;border-top:1px solid var(--s-line)}
+.s-sec h2{font-weight:500;font-size:clamp(30px,4.2vw,48px);line-height:1.08;letter-spacing:-.025em;margin:0;text-wrap:balance;max-width:18ch}
+.s-lede{font-family:var(--f-serif);font-size:19px;line-height:1.55;color:var(--s-muted);max-width:34em;margin:20px 0 0}
+.s-tracker{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,600px);gap:56px;align-items:start}
+.s-aside{position:sticky;top:96px}
+.s-tries{list-style:none;padding:0;margin:28px 0 0;display:flex;flex-direction:column;border-top:1px solid var(--s-line)}
+.s-tries li{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--s-line);font-size:15px}
+.s-tries code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;background:var(--s-panel);padding:3px 8px;border-radius:6px;white-space:nowrap}
+.s-tries span{color:var(--s-muted)}
+.s-panel{background:var(--s-panel);border-radius:24px;padding:24px}
+.s-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px;counter-reset:step}
+.s-step{border-top:1px solid var(--s-ink);padding-top:20px;counter-increment:step}
+.s-step::before{content:counter(step,decimal-leading-zero);font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;color:var(--s-clay)}
+.s-step h3{font-weight:500;font-size:22px;letter-spacing:-.3px;margin:14px 0 10px}
+.s-step p{font-family:var(--f-serif);font-size:17px;line-height:1.55;color:var(--s-muted);margin:0}
+.s-split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:56px;align-items:start}
+.s-cats{display:flex;flex-direction:column;border-top:1px solid var(--s-line)}
+.s-cats div{display:grid;grid-template-columns:120px 1fr;gap:16px;padding:16px 0;border-bottom:1px solid var(--s-line)}
+.s-cats dt{font-weight:500;font-size:15px}
+.s-cats dd{margin:0;font-family:var(--f-serif);font-size:16px;line-height:1.5;color:var(--s-muted)}
+.s-band{background:var(--s-band);color:var(--s-band-text);border-radius:28px;padding:64px 56px;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:48px}
+.s-band h2{max-width:14ch}
+.s-band p{font-family:var(--f-serif);font-size:19px;line-height:1.55;color:var(--s-band-muted);margin:0}
+.s-band ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
+.s-band li{display:flex;gap:12px;font-size:16px;line-height:1.45}
+.s-band li::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--s-clay);margin-top:7px}
+.s-faq{border-top:1px solid var(--s-line);margin-top:40px}
+.s-faq details{border-bottom:1px solid var(--s-line)}
+.s-faq summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:16px;padding:22px 0;font-size:19px;font-weight:500;letter-spacing:-.2px}
+.s-faq summary::-webkit-details-marker{display:none}
+.s-faq summary::after{content:"+";font-weight:400;font-size:24px;line-height:1;color:var(--s-muted)}
+.s-faq details[open] summary::after{content:"\2013"}
+.s-faq p{font-family:var(--f-serif);font-size:17px;line-height:1.6;color:var(--s-muted);margin:0 0 22px;max-width:40em}
+.s-foot{border-top:1px solid var(--s-line);padding-block:40px 56px;margin-top:80px}
+.s-foot .s-wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;font-size:14px;color:var(--s-muted)}
+.s-foot a{color:var(--s-ink)}
+@media (max-width:900px){
+  .s-tracker,.s-split,.s-band{grid-template-columns:minmax(0,1fr)}
+  .s-aside{position:static}
+  .s-steps{grid-template-columns:1fr}
+  .s-band{padding:44px 28px}
+}
+@media (max-width:640px){
+  .s-wrap{padding-inline:16px}
+  .s-nav a:not(.s-btn){display:none}
+  .s-hero{padding-block:56px 48px}
+  .s-facts{grid-template-columns:1fr;margin-top:48px}
+  .s-facts div,.s-facts div+div{padding:16px 0;border-left:none;border-bottom:1px solid var(--s-line)}
+  .s-sec{padding-block:56px}
+  .s-panel{padding:14px;border-radius:18px;margin-inline:-4px}
+  .s-cats div{grid-template-columns:1fr;gap:4px}
+}
+:root,:root:not([data-theme]),:root:not([data-theme="light"]),:root[data-theme="dark"],:root[data-theme="light"]{--s-bg:#000000;--s-panel:#000000;--s-ink:#FFFFFF;--s-muted:#A3A3A3;--s-line:rgba(255,255,255,.28);--s-clay:#E5383B;--s-band:#FFFFFF;--s-band-text:#000000;--s-band-muted:#4A4A4A;color-scheme:dark}
+.s-tries code{border:1px solid rgba(255,255,255,.35)}
+.s-step{border-top-color:#fff}
+.s-facts div+div{border-left-color:var(--s-line)}
+.s-head{border-bottom-color:var(--s-line)}
+</style>
+<style id="app-style">
+{{APP_CSS}}
+</style>
+</head>
+<body><header class="s-head"><div class="s-wrap">
+<a class="s-logo" href="#top"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5 17.5L19 6.5" stroke="var(--s-clay)" stroke-width="2.2" stroke-linecap="round"/></svg>Cutline</a>
+<nav class="s-nav" aria-label="Main"><a href="#how">How it works</a><a href="#foods">Foods</a><a href="#faq">FAQ</a><a class="s-btn s-btn-dark" href="#tracker">Start logging</a></nav>
+</div></header>
+<main id="top">
+<section class="s-wrap s-hero">
+<h1>Know what&rsquo;s on your plate in seconds.</h1>
+<p>Cutline is a food diary for people cutting weight or building muscle. Type a food and an amount, check the calories and macros, and press Enter. Your day adds itself up.</p>
+<div class="s-cta"><a class="s-btn s-btn-dark" href="#tracker">Start logging</a><a class="s-btn s-btn-line" href="#how">See how it works</a></div>
+<div class="s-facts">
+<div><b>434</b><span>foods built in, from ribeye to a Whataburger</span></div>
+<div><b>g, oz, lb or 4x</b><span>enter amounts the way you weigh or count them</span></div>
+<div><b>No sign-up</b><span>your log saves privately, right where you use it</span></div>
+</div>
+</section>
+<section class="s-sec" id="tracker"><div class="s-wrap s-tracker">
+<div class="s-aside">
+<h2>Your log</h2>
+<p class="s-lede">Set your targets once under Profile &amp; targets, then log as you eat. The preview shows what each food does to your day before anything is saved.</p>
+<ul class="s-tries">
+<li><code>chicken breast</code><code>179</code></li>
+<li><code>eggs</code><code>4x</code></li>
+<li><code>ribeye</code><code>8oz</code></li>
+<li><code>fage</code><span><code>1</code> = one cup</span></li>
+</ul>
+</div>
+<div class="s-panel"><div id="app-root"></div></div>
+</div></section>
+<section class="s-sec" id="how"><div class="s-wrap">
+<h2>Three steps, then it stays out of your way.</h2>
+<div class="s-steps">
+<div class="s-step"><h3>Set your targets</h3><p>Enter your height, weight, goal and activity level once. Cutline works out a daily calorie target with the Mifflin-St Jeor formula, plus protein and net-carb targets for keto or low carb.</p></div>
+<div class="s-step"><h3>Log as you eat</h3><p>Type a food and how much you had. You see calories, protein, net carbs and fat, and what&rsquo;s left for the day, before you press Enter.</p></div>
+<div class="s-step"><h3>Watch the trend</h3><p>Weigh in each morning and Cutline charts your trend. After 14 logged days it checks your targets against your real results and offers a better maintenance number.</p></div>
+</div>
+</div></section>
+<section class="s-sec" id="foods"><div class="s-wrap s-split">
+<div>
+<h2>Built from a real grocery list.</h2>
+<p class="s-lede">Generic foods use USDA values per 100 grams. Brand items use the label for one serving, so typing <code style="font-family:'IBM Plex Mono',monospace;font-size:15px">1</code> logs a whole cup, bottle or bar. Restaurant items use each chain&rsquo;s published numbers and log by count, so <code style="font-family:'IBM Plex Mono',monospace;font-size:15px">2</code> means two. Anything missing takes a minute to add from its label.</p>
+</div>
+<dl class="s-cats">
+<div><dt>Beef</dt><dd>Ground 80/20 to 95/5, ribeye, sirloin, strip, filet, flank, skirt, brisket, short ribs</dd></div>
+<div><dt>Poultry &amp; pork</dt><dd>Breast, thighs, wings, rotisserie chicken, duck, pork tenderloin, pulled pork, bacon, sausage</dd></div>
+<div><dt>Seafood &amp; game</dt><dd>Salmon, tuna, shrimp, cod, bison, venison, lamb</dd></div>
+<div><dt>Dairy &amp; protein</dt><dd>Fage, Chobani, Oikos, Siggi&rsquo;s, Two Good, Good Culture, Fairlife, Premier Protein, Quest, Barebells</dd></div>
+<div><dt>Restaurants</dt><dd>McDonald&rsquo;s, Chick-fil-A, Whataburger, Taco Bell, Wendy&rsquo;s, In-N-Out, Chipotle, Starbucks, Panda Express, KFC, Burger King, Sonic, Chili&rsquo;s, Pizza Hut, Braum&rsquo;s, Taco Casa</dd></div>
+<div><dt>Everything else</dt><dd>Eggs, vegetables, fruit, rice, oats, potatoes, beans, nuts, oils, bread and tortillas</dd></div>
+</dl>
+</div></section>
+<section class="s-sec"><div class="s-wrap">
+<div class="s-band">
+<div><h2>Private by default.</h2></div>
+<div style="display:flex;flex-direction:column;gap:24px">
+<p>Cutline is one web page with no ads and no analytics. There is no Cutline account to create and no Cutline server holding your diary.</p>
+<ul>
+<li>On the web, your log stays in this browser on this device.</li>
+<li>Opened inside Claude, it saves to your own Claude account instead.</li>
+<li>The code is open, so you can read exactly what it does. Fonts load from Google Fonts.</li>
+</ul>
+</div>
+</div>
+</div></section>
+<section class="s-sec" id="faq"><div class="s-wrap">
+<h2>Questions</h2>
+<div class="s-faq">
+<details><summary>How accurate are the numbers?</summary><p>Close enough to steer by. Generic foods are USDA averages, weighed cooked unless the name says raw. Brand items match the package label, but recipes change, so check yours.</p></details>
+<details><summary>What if my food isn&rsquo;t in the list?</summary><p>Open Custom foods in the tracker. On the web version you can scan or type the barcode to look it up in Open Food Facts; inside Claude you can photograph the nutrition label. Check the numbers, save, and it&rsquo;s searchable from then on.</p></details>
+<details><summary>Can I use it on my phone?</summary><p>Yes. It&rsquo;s built for phones first. On the web version, add the page to your home screen and it opens like an app.</p></details>
+<details><summary>Will I lose my log if I clear my browser?</summary><p>On the web, yes, because the log lives in your browser. Opened inside Claude, it&rsquo;s kept in your Claude account.</p></details>
+<details><summary>Is this medical advice?</summary><p>No. Targets come from standard formulas and are estimates. Talk to a doctor or dietitian before a big change to how you eat.</p></details>
+</div>
+</div></section>
+</main>
+<footer class="s-foot"><div class="s-wrap"><span>Cutline &middot; a food diary for cutting and building. Not affiliated with any restaurant or brand listed.</span><span>Open source on <a href="https://github.com/Skull-Bones/Cutline">GitHub</a></span></div></footer>
+{{APP_SCRIPT}}
+</body>
+</html>
