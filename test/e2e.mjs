@@ -87,7 +87,7 @@ await test('web: edit an entry by amount, and edit a legacy entry by its numbers
 });
 
 await test('web: daily weigh-in updates the profile and draws the trend chart', async () => {
-  const { page, errors } = await open('index.html', { storage: { cutline_v2: stateWith({ weights: { [day(-10)]: 200.2 } }) } });
+  const { page, errors } = await open('index.html', { storage: { cutline_v2: stateWith({ weights: { [day(-10)]: 200.6 } }) } });
   await page.fill('#w-today', '197.4'); await page.click('.weigh-form button[type="submit"]'); await page.waitForTimeout(100);
   assert.match(await text(page, '#weigh-note'), /197\.4 lb/);
   const saved = JSON.parse(await page.evaluate(() => localStorage.getItem('cutline_v2')));
@@ -96,7 +96,7 @@ await test('web: daily weigh-in updates the profile and draws the trend chart', 
   assert.match(await text(page, '#weigh-note'), /between 50 and 1,000/);
   await tabTo(page, 'history');
   assert.equal(await page.$$eval('svg.chart circle', c => c.length), 2);
-  assert.match(await text(page, '.chart-note'), /-2\.8 lb/);
+  assert.match(await text(page, '.chart-note'), /-3\.2 lb/);
   assert.deepEqual(errors, []);
 });
 
