@@ -162,7 +162,7 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
 </div>
 </div></section>
 </main>
-<footer class="s-foot"><div class="s-wrap"><span>Cutline &middot; a food diary for cutting and building</span><span>Open source on <a href="https://github.com/Skull-Bones/Cutline">GitHub</a></span></div></footer><script id="state-data" type="application/json">{"profile":{"sex":"","age":30,"heightIn":68,"weightLb":180,"goalWeightLb":170,"activity":1.55,"dietMode":"lowcarb","deficit":500,"proteinFloorEnabled":false,"proteinFloorG":150},"customFoods":[],"days":{},"weights":{}}</script><script>(function boot(state){
+<footer class="s-foot"><div class="s-wrap"><span>Cutline &middot; a food diary for cutting and building</span><span>Open source on <a href="https://github.com/Skull-Bones/Cutline">GitHub</a></span></div></footer><script id="state-data" type="application/json">{"profile":{"sex":"","age":30,"heightIn":68,"weightLb":180,"goalWeightLb":170,"activity":1.55,"dietMode":"lowcarb","deficit":500,"goalWeeks":12,"proteinFloorEnabled":false,"proteinFloorG":150},"customFoods":[],"days":{},"weights":{}}</script><script>(function boot(state){
   var HEAD_RESET = ':root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,-apple-system,sans-serif;background:#fafafa}img{max-width:100%}[hidden]{display:none!important}';
 
   var CSS = ':root{--bg:#FAF9F5;--surface:#FFFFFF;--surface-2:#F0EEE6;--text:#141413;--text-muted:#5E5D59;--accent:#C96442;--accent-ink:#FAF9F5;--ink:#141413;--ink-text:#FAF9F5;--accent-2:#4D6B3A;--border:#E6E3DA;--warn:#B23A2A;--warn-bg:#F7E6E1;--good:#4D6B3A;--good-bg:#E8EEE2;color-scheme:light}' +
@@ -265,6 +265,8 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
     '.hrow .meta{font-size:11.5px;color:var(--text-muted);font-variant-numeric:tabular-nums}' +
     '.foot-note{font-size:11.5px;color:var(--text-muted);line-height:1.6;margin-top:22px;padding-top:14px;border-top:1px solid var(--border)}' +
     '@media(max-width:420px){.field-grid,.addform{grid-template-columns:1fr}.addform.logform{grid-template-columns:1fr 104px}.pv-cell .v{font-size:16px}.stat .num{font-size:36px}}';
+
+  CSS += "#app-root .weeks-row{display:flex;align-items:center;gap:12px}#app-root .weeks-row input[type=range]{flex:1;width:auto;min-width:0;accent-color:var(--accent);height:28px;padding:0;background:none;border:none}#app-root .weeks-val{font-family:\"IBM Plex Mono\",ui-monospace,monospace;font-weight:600;font-size:14px;min-width:78px;text-align:right;color:var(--text)}#app-root .weeks-scale{display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted)}#app-root .targets-out p{margin:0 0 8px}#app-root .targets-out p:last-child{margin-bottom:0}#app-root .plan-warn{color:var(--warn);background:var(--warn-bg);border-radius:8px;padding:8px 10px}#app-root .plan-warn b{color:var(--warn)}#app-root .plan-fine{font-size:11.5px}#app-root .prof-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:14px;flex-wrap:wrap}#app-root .prof-status{margin-right:auto;font-size:12.5px;color:var(--text-muted)}#app-root .btn-save{background:var(--ink);color:var(--ink-text);border:none;border-radius:999px;padding:10px 18px;font-size:14px;font-weight:600;cursor:pointer}#app-root .btn-ghost{background:none;border:1px solid var(--border);color:var(--text);border-radius:999px;padding:9px 16px;font-size:14px;cursor:pointer}#app-root .btn-save:disabled,#app-root .btn-ghost:disabled{opacity:.4;cursor:default}#app-root .btn-save:focus-visible,#app-root .btn-ghost:focus-visible{outline:2px solid var(--accent);outline-offset:2px}";
 
   // Per 100g. Cooked weight unless the name says raw. F(name, aliases, kcal, protein, carbs, fiber, fat, [pieceName, pieceGrams])
   // S(...) takes label values for one serving and converts them to per 100g, so "1" or "1x" logs one serving.
@@ -473,13 +475,73 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
     var sexTerm = p.sex==='male'?5 : p.sex==='female'?-161 : -78;
     return 10*kg+6.25*cm-5*age+sexTerm;
   }
+  // Goal plan: the deficit comes from current weight, goal weight and the chosen timeline (6-26 weeks).
+  var GOAL_MIN_WEEKS=6, GOAL_MAX_WEEKS=26;
+  function goalWeeksOf(p){
+    var w=p.goalWeeks;
+    if(!(w>=GOAL_MIN_WEEKS)){ var d=(p.weightLb||0)-(p.goalWeightLb||0); w=(d>0&&p.deficit>0)?Math.round(d*3500/(p.deficit*7)):12; }
+    return Math.min(GOAL_MAX_WEEKS,Math.max(GOAL_MIN_WEEKS,w));
+  }
+  function calorieFloor(p){ return p.sex==='male'?1500:p.sex==='female'?1200:1350; }
   function calcTargets(p){
-    var bmr=calcBMR(p), tdee=bmr*(p.activity||1.2), calorieTarget=tdee-(p.deficit||0);
+    var bmr=calcBMR(p), tdee=bmr*(p.activity||1.2);
+    var weeks=goalWeeksOf(p), delta=(p.weightLb||0)-(p.goalWeightLb||0);
+    if(Math.abs(delta)<0.5) delta=0;
+    var needed=delta*3500/(weeks*7), deficit=needed, floor=calorieFloor(p), limited='';
+    if(deficit<-500){ deficit=-500; limited='surplus'; }
+    if(deficit>0 && tdee-deficit<floor){ deficit=Math.max(0,tdee-floor); limited='floor'; }
+    var calorieTarget=tdee-deficit, lbPerWeek=deficit*7/3500;
+    var weeksActual=delta && Math.abs(lbPerWeek)>0.01 ? Math.abs(delta/lbPerWeek) : null;
     var proteinG=(p.goalWeightLb||p.weightLb||0)*1;
     if(p.proteinFloorEnabled) proteinG=Math.max(proteinG,p.proteinFloorG||0);
     var netCarbG = p.netCarbLimit>0 ? p.netCarbLimit : (p.dietMode==='lowcarb'?75:25);
     var fatG=Math.max(0,(calorieTarget-proteinG*4-netCarbG*4)/9);
-    return {bmr:bmr,tdee:tdee,calorieTarget:calorieTarget,proteinG:proteinG,netCarbG:netCarbG,fatG:fatG};
+    return {bmr:bmr,tdee:tdee,calorieTarget:calorieTarget,proteinG:proteinG,netCarbG:netCarbG,fatG:fatG,deficit:deficit,needed:needed,weeks:weeks,weeksActual:weeksActual,lbPerWeek:lbPerWeek,delta:delta,floor:floor,limited:limited};
+  }
+
+  // Profile edits go into a draft and only apply when Save is pressed.
+  var draft = null;
+  function addDaysLabel(n){ var d=new Date(); d.setDate(d.getDate()+Math.round(n)); return d.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}); }
+  function planHTML(p){
+    var t=calcTargets(p), out='', from=R1(p.weightLb||0), to=R1(p.goalWeightLb||0);
+    if(!t.delta) out+='<p>You&rsquo;re at your goal weight, so your targets are set to maintenance.<\/p>';
+    else if(t.delta>0) out+='<p>To go from <b>'+from+'<\/b> to <b>'+to+' lb<\/b> in <b>'+t.weeks+' weeks<\/b>, lose about <b>'+R1(t.delta/t.weeks)+' lb<\/b> a week. That takes a daily deficit of <b>'+N(t.needed)+'<\/b> kcal.<\/p>';
+    else out+='<p>To go from <b>'+from+'<\/b> to <b>'+to+' lb<\/b> in <b>'+t.weeks+' weeks<\/b>, gain about <b>'+R1(-t.delta/t.weeks)+' lb<\/b> a week. That takes a daily surplus of <b>'+N(-t.needed)+'<\/b> kcal.<\/p>';
+    if(t.limited==='floor') out+='<p class="plan-warn">That pace would put you under <b>'+N(t.floor)+'<\/b> kcal a day, the lowest Cutline will set. Your target stays at that level, which reaches your goal in about <b>'+R1(t.weeksActual)+'<\/b> weeks. Slide the timeline longer to match.<\/p>';
+    else if(t.limited==='surplus') out+='<p class="plan-warn">The surplus is capped at <b>500<\/b> kcal a day to limit fat gain, which reaches your goal in about <b>'+R1(t.weeksActual)+'<\/b> weeks.<\/p>';
+    else if(t.delta>0 && t.delta/t.weeks>(p.weightLb||0)*0.01) out+='<p class="plan-warn">That&rsquo;s more than 1% of your body weight a week, which makes it harder to keep muscle. A longer timeline is gentler.<\/p>';
+    out+='<p>Daily calories <b>'+N(t.calorieTarget)+'<\/b> &middot; protein <b>'+R(t.proteinG)+'g<\/b>'+(p.proteinFloorEnabled?' (floor)':'')+' &middot; net carbs <b>'+R(t.netCarbG)+'g<\/b> &middot; fat <b>'+R(t.fatG)+'g<\/b>'+(t.weeksActual?'<br>Goal date about <b>'+addDaysLabel(t.weeksActual*7)+'<\/b>':'')+'<\/p>';
+    out+='<p class="plan-fine">Maintenance is about '+N(t.tdee)+' kcal (BMR '+N(t.bmr)+' &times; activity). The plan assumes about 3,500 kcal per pound of body weight.<\/p>';
+    return out;
+  }
+  function profileHTML(){
+    var p=draft||state.profile, w=goalWeeksOf(p), h='';
+    function num(id,label,field,val,attrs){ return '<div class="field"><label for="'+id+'">'+label+'<\/label><input id="'+id+'" type="number" data-field="'+field+'" value="'+(val==null?'':val)+'" '+(attrs||'')+'><\/div>'; }
+    h+='<div class="field-grid">';
+    h+='<div class="field"><label for="f-sex">Sex<\/label><select id="f-sex" data-field="sex"><option value=""'+(!p.sex?' selected':'')+'>Not set<\/option><option value="male"'+(p.sex==='male'?' selected':'')+'>Male<\/option><option value="female"'+(p.sex==='female'?' selected':'')+'>Female<\/option><\/select><\/div>';
+    h+=num('f-age','Age','age',p.age||'','min="10" max="100" placeholder="e.g. 34"');
+    h+=num('f-height','Height (in)','heightIn',p.heightIn,'step="0.1"');
+    h+='<div class="field"><label for="f-activity">Activity<\/label><select id="f-activity" data-field="activity">';
+    ACTIVITY.forEach(function(a){ h+='<option value="'+a.v+'"'+(Math.abs(p.activity-a.v)<0.001?' selected':'')+'>'+esc(a.label)+'<\/option>'; });
+    h+='<\/select><\/div>';
+    h+=num('f-weight','Current weight (lb)','weightLb',p.weightLb,'step="0.1"');
+    h+=num('f-goal','Goal weight (lb)','goalWeightLb',p.goalWeightLb,'step="0.1"');
+    h+='<div class="field full"><label for="f-weeks">Time to reach your goal<\/label><div class="weeks-row"><input id="f-weeks" type="range" min="'+GOAL_MIN_WEEKS+'" max="'+GOAL_MAX_WEEKS+'" step="1" data-field="goalWeeks" value="'+w+'" aria-describedby="weeks-val"><span id="weeks-val" class="weeks-val">'+w+' weeks<\/span><\/div><div class="weeks-scale"><span>6 weeks<\/span><span>26 weeks<\/span><\/div><\/div>';
+    h+='<div class="field"><label for="f-diet">Carb target<\/label><select id="f-diet" data-field="dietMode"><option value="keto"'+(p.dietMode==='keto'?' selected':'')+'>Keto (&le;25g net)<\/option><option value="lowcarb"'+(p.dietMode==='lowcarb'?' selected':'')+'>Low carb (&le;75g net)<\/option><\/select><\/div>';
+    h+=num('f-netlimit','Net carb limit (g)','netCarbLimit',p.netCarbLimit>0?p.netCarbLimit:'','step="1" min="0" placeholder="auto"');
+    h+=num('f-protfloor','Protein floor (g)','proteinFloorG',p.proteinFloorG,'step="5"'+(p.proteinFloorEnabled?'':' disabled'));
+    h+='<div class="field full checkrow"><label class="checklabel"><input type="checkbox" id="f-protfloor-on" data-field="proteinFloorEnabled" '+(p.proteinFloorEnabled?'checked':'')+'> Use protein floor instead of bodyweight target (optional goal)<\/label><\/div>';
+    h+='<\/div>';
+    h+='<div class="targets-out" id="prof-out">'+planHTML(p)+'<\/div>';
+    h+='<div class="prof-actions"><span id="prof-status" class="prof-status">'+(draft?'Unsaved changes':'Saved')+'<\/span><button type="button" class="btn-ghost" data-action="discard-profile" id="prof-discard"'+(draft?'':' disabled')+'>Discard<\/button><button type="button" class="btn-save" data-action="save-profile" id="prof-save"'+(draft?'':' disabled')+'>Save changes<\/button><\/div>';
+    return h;
+  }
+  function updateProfilePreview(){
+    var p=draft||state.profile, o=$('prof-out'); if(o) o.innerHTML=planHTML(p);
+    var w=$('weeks-val'); if(w) w.textContent=goalWeeksOf(p)+' weeks';
+    ['prof-save','prof-discard'].forEach(function(id){ var b=$(id); if(b) b.disabled=!draft; });
+    var s=$('prof-status'); if(s) s.textContent=draft?'Unsaved changes':'Saved';
+    var pf=$('f-protfloor'); if(pf) pf.disabled=!p.proteinFloorEnabled;
   }
 
   function dayTotals(entries){
@@ -641,9 +703,6 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
     var remaining = t.calorieTarget - totals.cals;
     var protLeft = t.proteinG - totals.protein;
     var missing = []; if(!p.age) missing.push('age'); if(!p.sex) missing.push('sex');
-    var lbPerWeek = (p.deficit*7)/3500;
-    var toGoal = p.weightLb - p.goalWeightLb;
-    var weeksToGoal = lbPerWeek>0 && toGoal>0 ? (toGoal/lbPerWeek) : null;
     var usual = usualFoods();
 
     var html = '';
@@ -715,25 +774,7 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
     html += '<section><h2>Your log so far<\/h2><div class="card"><div class="insights">'+insightsHTML(t)+'<\/div>'+historyHTML(t, viewDate)+'<\/div><\/section>';
 
     html += '<section><details id="prof-wrap" class="card"'+(openState['prof-wrap']?' open':'')+'><summary>Profile &amp; targets <span class="chev">&#8250;<\/span><\/summary>';
-    html += '<div class="field-grid">';
-    html += '<div class="field"><label for="f-sex">Sex<\/label><select id="f-sex" data-field="sex"><option value=""'+(p.sex===''?' selected':'')+'>Not set<\/option><option value="male"'+(p.sex==='male'?' selected':'')+'>Male<\/option><option value="female"'+(p.sex==='female'?' selected':'')+'>Female<\/option><\/select><\/div>';
-    html += '<div class="field"><label for="f-age">Age<\/label><input id="f-age" type="number" min="10" max="100" data-field="age" value="'+(p.age||'')+'" placeholder="e.g. 34"><\/div>';
-    html += '<div class="field"><label for="f-height">Height (in)<\/label><input id="f-height" type="number" step="0.1" data-field="heightIn" value="'+p.heightIn+'"><\/div>';
-    html += '<div class="field"><label for="f-weight">Current weight (lb)<\/label><input id="f-weight" type="number" step="0.1" data-field="weightLb" value="'+p.weightLb+'"><\/div>';
-    html += '<div class="field"><label for="f-goal">Goal weight (lb)<\/label><input id="f-goal" type="number" step="0.1" data-field="goalWeightLb" value="'+p.goalWeightLb+'"><\/div>';
-    html += '<div class="field"><label for="f-deficit">Deficit (kcal/day)<\/label><input id="f-deficit" type="number" step="25" data-field="deficit" value="'+p.deficit+'"><\/div>';
-    html += '<div class="field"><label for="f-activity">Activity<\/label><select id="f-activity" data-field="activity">';
-    ACTIVITY.forEach(function(a){ html += '<option value="'+a.v+'"'+(Math.abs(p.activity-a.v)<0.001?' selected':'')+'>'+esc(a.label)+'<\/option>'; });
-    html += '<\/select><\/div>';
-    html += '<div class="field"><label for="f-diet">Carb target<\/label><select id="f-diet" data-field="dietMode"><option value="keto"'+(p.dietMode==='keto'?' selected':'')+'>Keto (&le;25g net)<\/option><option value="lowcarb"'+(p.dietMode==='lowcarb'?' selected':'')+'>Low carb (&le;75g net)<\/option><\/select><\/div>';
-    html += '<div class="field"><label for="f-netlimit">Net carb limit (g)<\/label><input id="f-netlimit" type="number" step="1" min="0" data-field="netCarbLimit" value="'+(p.netCarbLimit>0?p.netCarbLimit:'')+'" placeholder="auto ('+(p.dietMode==='lowcarb'?75:25)+')"><\/div>';
-    html += '<div class="field"><label for="f-protfloor">Protein floor (g)<\/label><input id="f-protfloor" type="number" step="5" data-field="proteinFloorG" value="'+p.proteinFloorG+'" '+(p.proteinFloorEnabled?'':'disabled')+'><\/div>';
-    html += '<div class="field full checkrow"><label class="checklabel"><input type="checkbox" id="f-protfloor-on" data-field="proteinFloorEnabled" '+(p.proteinFloorEnabled?'checked':'')+'> Use protein floor instead of bodyweight target (optional goal)<\/label><\/div>';
-    html += '<\/div>';
-    html += '<div class="targets-out">BMR <b>'+R(t.bmr)+'<\/b> kcal &middot; TDEE <b>'+R(t.tdee)+'<\/b> kcal &middot; Calorie target <b>'+R(t.calorieTarget)+'<\/b> kcal<br>' +
-      'Protein target <b>'+R(t.proteinG)+'g<\/b>'+(p.proteinFloorEnabled?' (floor)':' (bodyweight)')+' &middot; Net carb limit <b>'+R(t.netCarbG)+'g<\/b>'+(p.netCarbLimit>0?' (custom)':'')+' &middot; Fat target <b>'+R(t.fatG)+'g<\/b>' +
-      (weeksToGoal?('<br>At '+R1(lbPerWeek)+' lb/week, about <b>'+R1(weeksToGoal)+'<\/b> weeks to goal weight'):'') +
-      '<\/div>';
+    html += profileHTML();
     html += '<\/details><\/section>';
 
     html += '<div class="foot-note">Targets use the Mifflin-St Jeor formula. Food values are typical averages per 100g, cooked weight unless the name says raw. Brand items use the label for one serving. Recipes change, so check your package, and use a custom food for anything missing. Restaurant items use each chain&rsquo;s published numbers for one item, so log them by count. Fiber counts as 0 where a chain does not list it. Your log is private to you: it saves to your Claude account when you are signed in, and to this browser otherwise.<\/div>';
@@ -850,6 +891,17 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
     var t = ev.target.closest('[data-action]');
     if(!t) return;
     var action = t.getAttribute('data-action');
+    if(action==='save-profile'){
+      if(!draft) return;
+      var oldW=state.profile.weightLb;
+      if(!(draft.goalWeeks>=GOAL_MIN_WEEKS)) draft.goalWeeks=goalWeeksOf(draft);
+      state.profile=draft; draft=null;
+      if(state.profile.weightLb>0 && state.profile.weightLb!==oldW) state.weights[todayStr()]=state.profile.weightLb;
+      persist();
+      var st=$('prof-status'); if(st) st.textContent='Saved. Your targets are updated.';
+      return;
+    }
+    if(action==='discard-profile'){ draft=null; render(); return; }
     if(action==='prev-day'){ viewDate = shiftDate(viewDate,-1); if(!state.days[viewDate]) state.days[viewDate]=[]; render(); }
     else if(action==='next-day'){ viewDate = shiftDate(viewDate,1); if(!state.days[viewDate]) state.days[viewDate]=[]; render(); }
     else if(action==='goto-day'){
@@ -880,19 +932,19 @@ a:focus-visible,summary:focus-visible{outline:2px solid var(--s-clay);outline-of
     }
   });
 
-  document.addEventListener('change', function(ev){
-    var t = ev.target.closest('[data-field]');
+  function onProfileEdit(ev){
+    var t=ev.target && ev.target.closest ? ev.target.closest('[data-field]') : null;
     if(!t) return;
-    var field = t.getAttribute('data-field');
-    if(t.type==='checkbox'){ state.profile[field] = t.checked; persist(); return; }
-    var val = t.value;
-    if(field==='sex' || field==='dietMode'){ state.profile[field] = val; }
-    else if(field==='activity'){ state.profile.activity = parseFloat(val); }
-    else if(field==='age'){ state.profile.age = val? parseInt(val,10) : null; }
-    else { state.profile[field] = parseFloat(val)||0; }
-    if(field==='weightLb' && state.profile.weightLb>0){ state.weights[todayStr()] = state.profile.weightLb; }
-    persist();
-  });
+    var field=t.getAttribute('data-field'), d=draft||(draft=JSON.parse(JSON.stringify(state.profile)));
+    if(t.type==='checkbox') d[field]=t.checked;
+    else if(field==='sex'||field==='dietMode') d[field]=t.value;
+    else if(field==='age') d.age=t.value?parseInt(t.value,10):null;
+    else if(field==='goalWeeks') d.goalWeeks=parseInt(t.value,10);
+    else d[field]=parseFloat(t.value)||0;
+    updateProfilePreview();
+  }
+  document.addEventListener('input', onProfileEdit);
+  document.addEventListener('change', onProfileEdit);
 
   document.addEventListener('submit', function(ev){
     var form = ev.target.closest('[data-action]');
