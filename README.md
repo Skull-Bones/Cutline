@@ -1,6 +1,6 @@
 # Cutline
 
-A food diary and diet tracker in a single HTML file. Type a food and an amount, check the calories and macros, then press Enter to log it.
+A food diary and diet tracker in a single HTML file, with a landing page and the tracker on one page. Type a food and an amount, check the calories and macros, then press Enter to log it.
 
 ## Features
 
