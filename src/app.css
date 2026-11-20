@@ -67,6 +67,7 @@ details.card[open] summary .chev{transform:rotate(90deg)}
 .usual .lab{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px}
 .usual .row{display:flex;flex-wrap:wrap;gap:6px}
 .pv{grid-column:1/-1;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+.pv:empty{display:none}
 .pv-title{font-size:14px;font-weight:600}
 .pv-sub{font-size:12px;color:var(--text-muted);margin-top:1px}
 .pv-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
@@ -98,7 +99,13 @@ details.card[open] summary .chev{transform:rotate(90deg)}
 .hrow .top span:last-child{font-family:"IBM Plex Mono",monospace;font-size:12px;font-variant-numeric:tabular-nums;color:var(--text-muted);font-weight:500}
 .hrow .bar{height:6px}
 .hrow .meta{font-size:11.5px;color:var(--text-muted);font-variant-numeric:tabular-nums}
-.foot-note{font-size:11.5px;color:var(--text-muted);line-height:1.6;margin-top:22px;padding-top:14px;border-top:1px solid var(--border)}
+/* Fine print, kept out of the way: a tiny off-white "Legal" tab at the bottom right that opens on tap. */
+.legal{margin-top:28px;text-align:right}
+.legal summary{display:inline-block;list-style:none;cursor:pointer;font-size:10px;letter-spacing:.3px;color:rgba(240,236,228,.38);padding:4px 2px}
+.legal summary::-webkit-details-marker{display:none}
+.legal summary:hover,.legal summary:focus-visible{color:rgba(240,236,228,.7)}
+.legal[open] summary{color:rgba(240,236,228,.6)}
+.legal-text{text-align:left;font-size:11px;line-height:1.6;color:rgba(240,236,228,.6);margin-top:6px}
 @media(max-width:420px){.field-grid,.addform{grid-template-columns:1fr}
 .addform.logform{grid-template-columns:1fr 104px}
 .pv-cell .v{font-size:16px}

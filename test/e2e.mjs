@@ -100,6 +100,32 @@ await test('web: daily weigh-in updates the profile and draws the trend chart', 
   assert.deepEqual(errors, []);
 });
 
+await test('web: suggestions follow the clock: 3 breakfast foods in the morning, 3 dinner foods at night', async () => {
+  // Ids carry the logging time: 'e' + ms in base 36 + 4 characters. Two weeks of meals at fixed times.
+  const at = (offset, h, m) => { const d = new Date(); d.setDate(d.getDate() + offset); d.setHours(h, m, 0, 0); return 'e' + d.getTime().toString(36) + 'abcd'; };
+  const e = (id, name, portion) => ({ id, name, portion, cals: 100, protein: 10, carbs: 1, fiber: 0, fat: 1 });
+  const st = JSON.parse(stateWith()); st.days = {};
+  for (let i = 1; i <= 14; i++) st.days[day(-i)] = [
+    e(at(-i, 7, 30), 'Egg, whole', '4 × egg (200g)'), e(at(-i, 7, 32), 'Banana', '1 × banana (118g)'), e(at(-i, 7, 35), 'Greek yogurt, nonfat', '170g'),
+    e(at(-i, 12, 15), 'Pork tenderloin, cooked', '300g'),
+    e(at(-i, 19, 0), 'Chicken breast, cooked', '400g'), e(at(-i, 19, 2), 'White rice, cooked', '150g'), e(at(-i, 19, 5), 'Italian sausage, pork, cooked', '135g'),
+  ];
+  const clock = h => `(() => { const R = Date; const t = new R(); t.setHours(${h}, 0, 0, 0); const shift = t.getTime() - R.now();
+    class D extends R { constructor(...a) { if (a.length) super(...a); else super(R.now() + shift); } static now() { return R.now() + shift; } } window.Date = D; })();`;
+  const chips = page => page.$$eval('.usual .chip', els => els.map(x => x.dataset.name));
+  const morning = await open('index.html', { storage: { cutline_v2: JSON.stringify(st) }, init: clock(8) });
+  assert.deepEqual((await chips(morning.page)).sort(), ['Banana', 'Egg, whole', 'Greek yogurt, nonfat']);
+  assert.equal(await morning.page.$eval('.usual .chip[data-name="Egg, whole"]', x => x.dataset.amt), '4x');
+  assert.equal(await text(morning.page, '#pv'), '', 'no instructions under an empty preview');
+  const night = await open('index.html', { storage: { cutline_v2: JSON.stringify(st) }, init: clock(19) });
+  assert.deepEqual((await chips(night.page)).sort(), ['Chicken breast, cooked', 'Italian sausage, pork, cooked', 'White rice, cooked']);
+  assert.equal((await chips(night.page)).length, 3);
+  // The fine print is a small closed Legal tab.
+  assert.equal(await night.page.$eval('details.legal', d => d.open), false);
+  assert.equal(await text(night.page, 'details.legal summary'), 'Legal');
+  assert.deepEqual([...morning.errors, ...night.errors], []);
+});
+
 await test('web: the day rolls over at midnight while the page stays open', async () => {
   const init = `(() => { const RealDate = Date; let shift = 0; window.__shift = ms => { shift += ms; };
     class FakeDate extends RealDate { constructor(...a) { if (a.length) super(...a); else super(RealDate.now() + shift); } static now() { return RealDate.now() + shift; } }

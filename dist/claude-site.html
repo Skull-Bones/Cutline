@@ -173,6 +173,7 @@ details.card[open] summary .chev{transform:rotate(90deg)}
 .usual .lab{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px}
 .usual .row{display:flex;flex-wrap:wrap;gap:6px}
 .pv{grid-column:1/-1;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+.pv:empty{display:none}
 .pv-title{font-size:14px;font-weight:600}
 .pv-sub{font-size:12px;color:var(--text-muted);margin-top:1px}
 .pv-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
@@ -204,7 +205,13 @@ details.card[open] summary .chev{transform:rotate(90deg)}
 .hrow .top span:last-child{font-family:"IBM Plex Mono",monospace;font-size:12px;font-variant-numeric:tabular-nums;color:var(--text-muted);font-weight:500}
 .hrow .bar{height:6px}
 .hrow .meta{font-size:11.5px;color:var(--text-muted);font-variant-numeric:tabular-nums}
-.foot-note{font-size:11.5px;color:var(--text-muted);line-height:1.6;margin-top:22px;padding-top:14px;border-top:1px solid var(--border)}
+/* Fine print, kept out of the way: a tiny off-white "Legal" tab at the bottom right that opens on tap. */
+.legal{margin-top:28px;text-align:right}
+.legal summary{display:inline-block;list-style:none;cursor:pointer;font-size:10px;letter-spacing:.3px;color:rgba(240,236,228,.38);padding:4px 2px}
+.legal summary::-webkit-details-marker{display:none}
+.legal summary:hover,.legal summary:focus-visible{color:rgba(240,236,228,.7)}
+.legal[open] summary{color:rgba(240,236,228,.6)}
+.legal-text{text-align:left;font-size:11px;line-height:1.6;color:rgba(240,236,228,.6);margin-top:6px}
 @media(max-width:420px){.field-grid,.addform{grid-template-columns:1fr}
 .addform.logform{grid-template-columns:1fr 104px}
 .pv-cell .v{font-size:16px}
@@ -807,21 +814,30 @@ body{background:#000;color:#fff}
     var m=String(portion||'').match(/^(\d+(?:\.\d+)?) × /);
     return m ? m[1]+'x' : String(portion||'');
   }
-  // Foods logged at least twice, most frequent first, with the amount you log most often (ties go to the most recent).
-  function usualFoods(){
-    var info={};
+  // Entry ids start with the time they were logged ('e' + Date.now() in base 36 + 4 random characters).
+  function loggedAt(e){
+    var ms=parseInt(String(e.id||'').slice(1,-4),36);
+    return ms>1.6e12 && ms<Date.now()+864e5 ? new Date(ms) : null;
+  }
+  // The 3 foods you usually log around this time of day, each with the amount you usually log then.
+  // Every past entry votes for its food, weighted by how close its logging time was to now (a bell curve with a
+  // 90-minute spread, wrapping past midnight). Entries with no recorded time get a tiny vote so a brand-new
+  // tracker still suggests something. Foods logged only once never show.
+  function usualFoods(now){
+    now=now||new Date();
+    var hNow=now.getHours()+now.getMinutes()/60, info={};
     allEntries().forEach(function(e){
-      var n=resolvedName(e), a=amountFromPortion(e.portion);
-      var o=info[n]||(info[n]={n:n,count:0,amts:{}});
-      o.count++; o.amts[a]=(o.amts[a]||0)+1; o.lastAmt=a;
+      var at=loggedAt(e), w=0.01;
+      if(at){ var d=Math.abs(at.getHours()+at.getMinutes()/60-hNow); d=Math.min(d,24-d); w=Math.exp(-d*d/(2*1.5*1.5)); }
+      var n=resolvedName(e), a=amountFromPortion(e.portion), o=info[n]||(info[n]={n:n,count:0,score:0,amts:{}});
+      o.count++; o.score+=w; o.amts[a]=(o.amts[a]||0)+w;
     });
-    var list=Object.keys(info).map(function(k){
-      var o=info[k], best=o.lastAmt, bc=o.amts[o.lastAmt];
-      Object.keys(o.amts).forEach(function(a){ if(o.amts[a]>bc){ best=a; bc=o.amts[a]; } });
-      return {n:o.n,count:o.count,amt:best};
-    }).filter(function(o){ return o.count>=2; });
-    list.sort(function(a,b){ return b.count-a.count || (a.n<b.n?-1:1); });
-    return list.slice(0,6);
+    var list=Object.keys(info).map(function(k){ return info[k]; }).filter(function(o){ return o.count>=2; });
+    list.sort(function(a,b){ return b.score-a.score || b.count-a.count || (a.n<b.n?-1:1); });
+    return list.slice(0,3).map(function(o){
+      var best=Object.keys(o.amts).sort(function(a,b){ return o.amts[b]-o.amts[a]; })[0];
+      return {n:o.n, count:o.count, amt:best};
+    });
   }
   function proteinFoods(){
     var cnt={};
@@ -1219,7 +1235,7 @@ body{background:#000;color:#fff}
     }
 
     html += '<\/div>';
-    html += '<div class="foot-note">Targets use the Mifflin-St Jeor formula. Food values are per 100g from USDA FoodData Central, for the food as named (raw or cooked). Where USDA lists no fiber it counts as 0. Brand items use the label for one serving. Recipes change, so check your package, and use a custom food for anything missing. Restaurant items use each chain&rsquo;s published numbers for one item, so log them by count. Fiber counts as 0 where a chain does not list it. Your log is private to you: it saves to your Claude account when you are signed in, and to this browser otherwise.<\/div>';
+    html += '<details class="legal"><summary>Legal<\/summary><div class="legal-text">Targets use the Mifflin-St Jeor formula. Food values are per 100g from USDA FoodData Central, for the food as named (raw or cooked). Where USDA lists no fiber it counts as 0. Brand items use the label for one serving. Recipes change, so check your package, and use a custom food for anything missing. Restaurant items use each chain&rsquo;s published numbers for one item, so log them by count. Fiber counts as 0 where a chain does not list it. Your log is private to you: it saves to your Claude account when you are signed in, and to this browser otherwise. Cutline is not medical advice.<\/div><\/details>';
 
     return html;
   }
@@ -1365,7 +1381,7 @@ body{background:#000;color:#fff}
     var box=$('pv'); if(!box) return;
     var fq=($('f-food')||{}).value||'', aq=($('f-amt')||{}).value||'';
     if(!fq.trim()){
-      box.innerHTML='<div class="pv-hint">Type a food and an amount, like <b>chicken breast<\/b> and <b>179<\/b>, then press Enter to log it. Eggs and similar foods accept counts, like <b>4<\/b> or <b>4x<\/b>.<\/div>';
+      box.innerHTML='';
       return;
     }
     var m=findFoods(fq);

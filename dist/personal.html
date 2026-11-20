@@ -7,7 +7,7 @@
 <meta name="description" content="A food diary for cutting weight and building muscle. Type a food and an amount, see calories and macros, then log it. 7,800+ foods, keto and low-carb targets, weight tracking.">
 <meta name="theme-color" content="#000000">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Crect%20width%3D%2224%22%20height%3D%2224%22%20rx%3D%225%22%20fill%3D%22%23000%22%2F%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%228%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.8%22%2F%3E%3Cpath%20d%3D%22M6.5%2016.5L17.5%207.5%22%20stroke%3D%22%23E5383B%22%20stroke-width%3D%222.2%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <style>:root{color-scheme:dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px "DM Sans",system-ui,-apple-system,sans-serif;background:#000;color:#fff;-webkit-font-smoothing:antialiased}img{max-width:100%}[hidden]{display:none!important}</style>
 <style id="app-style">
 /* Cutline app styles. Single dark theme: black, white text and outlines, red until a goal is reached, Kelly green after. */
@@ -79,6 +79,7 @@ details.card[open] summary .chev{transform:rotate(90deg)}
 .usual .lab{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px}
 .usual .row{display:flex;flex-wrap:wrap;gap:6px}
 .pv{grid-column:1/-1;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+.pv:empty{display:none}
 .pv-title{font-size:14px;font-weight:600}
 .pv-sub{font-size:12px;color:var(--text-muted);margin-top:1px}
 .pv-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
@@ -110,7 +111,13 @@ details.card[open] summary .chev{transform:rotate(90deg)}
 .hrow .top span:last-child{font-family:"IBM Plex Mono",monospace;font-size:12px;font-variant-numeric:tabular-nums;color:var(--text-muted);font-weight:500}
 .hrow .bar{height:6px}
 .hrow .meta{font-size:11.5px;color:var(--text-muted);font-variant-numeric:tabular-nums}
-.foot-note{font-size:11.5px;color:var(--text-muted);line-height:1.6;margin-top:22px;padding-top:14px;border-top:1px solid var(--border)}
+/* Fine print, kept out of the way: a tiny off-white "Legal" tab at the bottom right that opens on tap. */
+.legal{margin-top:28px;text-align:right}
+.legal summary{display:inline-block;list-style:none;cursor:pointer;font-size:10px;letter-spacing:.3px;color:rgba(240,236,228,.38);padding:4px 2px}
+.legal summary::-webkit-details-marker{display:none}
+.legal summary:hover,.legal summary:focus-visible{color:rgba(240,236,228,.7)}
+.legal[open] summary{color:rgba(240,236,228,.6)}
+.legal-text{text-align:left;font-size:11px;line-height:1.6;color:rgba(240,236,228,.6);margin-top:6px}
 @media(max-width:420px){.field-grid,.addform{grid-template-columns:1fr}
 .addform.logform{grid-template-columns:1fr 104px}
 .pv-cell .v{font-size:16px}
@@ -202,36 +209,23 @@ body{background:#000;color:#fff}
 
 </style>
 <style id="shell-style">
-/* Personal page frame: header, intro column and the tracker panel. Layout: one 1120px column, two columns from 900px. */
+/* Personal page frame: header, then the tracker in one centered column with its tabs right under the header line. */
 .s-wrap{max-width:1120px;margin:0 auto;padding-inline:24px}
 .s-head{position:sticky;top:0;z-index:10;background:rgba(0,0,0,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
 .s-head .s-wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;height:64px}
 .s-logo{display:flex;align-items:center;gap:9px;color:var(--text);font-weight:600;font-size:19px;letter-spacing:-.3px}
 .s-logo svg{width:22px;height:22px;flex:none}
 .s-date{font-size:14px;color:var(--text-muted)}
-.s-main{padding-block:56px 40px}
-.s-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,600px);gap:56px;align-items:start}
-.s-aside{position:sticky;top:96px}
-.s-aside h1{font-weight:500;font-size:clamp(36px,5vw,56px);line-height:1.04;letter-spacing:-.03em;margin:0;text-wrap:balance}
-.s-lede{font-family:"Source Serif 4",Georgia,serif;font-size:19px;line-height:1.55;color:var(--text-muted);max-width:30em;margin:20px 0 0}
-.s-tries{list-style:none;padding:0;margin:28px 0 0;display:flex;flex-direction:column;border-top:1px solid var(--border)}
-.s-tries li{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);font-size:15px;color:var(--text-muted)}
-.s-tries code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;color:var(--text);border:1px solid rgba(255,255,255,.35);padding:3px 8px;border-radius:6px;white-space:nowrap}
-.s-foot{border-top:1px solid var(--border);padding-block:28px 48px;font-size:14px;color:var(--text-muted)}
-@media (max-width:900px){.s-grid{grid-template-columns:minmax(0,1fr);gap:32px}.s-aside{position:static}.s-tries{display:none}}
-@media (max-width:640px){.s-wrap{padding-inline:16px}.s-main{padding-block:28px}.s-lede{font-size:17px}}
+.s-main{padding-block:0 32px}
+.s-grid{max-width:680px}
+@media (max-width:640px){.s-wrap{padding-inline:16px}}
 </style>
 </head>
 <body>
 <header class="s-head"><div class="s-wrap"><div class="s-logo"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5 17.5L19 6.5" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round"/></svg>Cutline</div><div class="s-date" id="s-date"></div></div></header>
 <main class="s-main"><div class="s-wrap s-grid">
-<div class="s-aside"><h1>Your log</h1>
-<p class="s-lede">Type a food and an amount, check the preview, and press Enter. Your totals, history and targets are in the tabs.</p>
-<ul class="s-tries"><li><code>chicken breast</code><code>179</code></li><li><code>eggs</code><code>4x</code></li><li><code>italian sausage</code><code>135</code></li><li><code>fage</code><span><code>1</code> = one cup</span></li></ul>
-</div>
 <div class="s-panel"><div id="app-root"></div></div>
 </div></main>
-<footer class="s-foot"><div class="s-wrap">Cutline &middot; your personal food diary</div></footer>
 <script id="state-data" type="application/json">{"profile":{"sex":"","age":30,"heightIn":68,"weightLb":180,"goalWeightLb":170,"activity":1.55,"dietMode":"lowcarb","proteinFloorEnabled":false,"proteinFloorG":150,"goalWeeks":12},"customFoods":[],"days":{},"weights":{},"flags":{}}</script>
 <script>
 (function(){
@@ -668,21 +662,30 @@ body{background:#000;color:#fff}
     var m=String(portion||'').match(/^(\d+(?:\.\d+)?) × /);
     return m ? m[1]+'x' : String(portion||'');
   }
-  // Foods logged at least twice, most frequent first, with the amount you log most often (ties go to the most recent).
-  function usualFoods(){
-    var info={};
+  // Entry ids start with the time they were logged ('e' + Date.now() in base 36 + 4 random characters).
+  function loggedAt(e){
+    var ms=parseInt(String(e.id||'').slice(1,-4),36);
+    return ms>1.6e12 && ms<Date.now()+864e5 ? new Date(ms) : null;
+  }
+  // The 3 foods you usually log around this time of day, each with the amount you usually log then.
+  // Every past entry votes for its food, weighted by how close its logging time was to now (a bell curve with a
+  // 90-minute spread, wrapping past midnight). Entries with no recorded time get a tiny vote so a brand-new
+  // tracker still suggests something. Foods logged only once never show.
+  function usualFoods(now){
+    now=now||new Date();
+    var hNow=now.getHours()+now.getMinutes()/60, info={};
     allEntries().forEach(function(e){
-      var n=resolvedName(e), a=amountFromPortion(e.portion);
-      var o=info[n]||(info[n]={n:n,count:0,amts:{}});
-      o.count++; o.amts[a]=(o.amts[a]||0)+1; o.lastAmt=a;
+      var at=loggedAt(e), w=0.01;
+      if(at){ var d=Math.abs(at.getHours()+at.getMinutes()/60-hNow); d=Math.min(d,24-d); w=Math.exp(-d*d/(2*1.5*1.5)); }
+      var n=resolvedName(e), a=amountFromPortion(e.portion), o=info[n]||(info[n]={n:n,count:0,score:0,amts:{}});
+      o.count++; o.score+=w; o.amts[a]=(o.amts[a]||0)+w;
     });
-    var list=Object.keys(info).map(function(k){
-      var o=info[k], best=o.lastAmt, bc=o.amts[o.lastAmt];
-      Object.keys(o.amts).forEach(function(a){ if(o.amts[a]>bc){ best=a; bc=o.amts[a]; } });
-      return {n:o.n,count:o.count,amt:best};
-    }).filter(function(o){ return o.count>=2; });
-    list.sort(function(a,b){ return b.count-a.count || (a.n<b.n?-1:1); });
-    return list.slice(0,6);
+    var list=Object.keys(info).map(function(k){ return info[k]; }).filter(function(o){ return o.count>=2; });
+    list.sort(function(a,b){ return b.score-a.score || b.count-a.count || (a.n<b.n?-1:1); });
+    return list.slice(0,3).map(function(o){
+      var best=Object.keys(o.amts).sort(function(a,b){ return o.amts[b]-o.amts[a]; })[0];
+      return {n:o.n, count:o.count, amt:best};
+    });
   }
   function proteinFoods(){
     var cnt={};
@@ -1080,7 +1083,7 @@ body{background:#000;color:#fff}
     }
 
     html += '<\/div>';
-    html += '<div class="foot-note">Targets use the Mifflin-St Jeor formula. Food values are per 100g from USDA FoodData Central, for the food as named (raw or cooked). Where USDA lists no fiber it counts as 0. Brand items use the label for one serving. Recipes change, so check your package, and use a custom food for anything missing. Restaurant items use each chain&rsquo;s published numbers for one item, so log them by count. Fiber counts as 0 where a chain does not list it. Your log is private to you: it saves to your Claude account when you are signed in, and to this browser otherwise.<\/div>';
+    html += '<details class="legal"><summary>Legal<\/summary><div class="legal-text">Targets use the Mifflin-St Jeor formula. Food values are per 100g from USDA FoodData Central, for the food as named (raw or cooked). Where USDA lists no fiber it counts as 0. Brand items use the label for one serving. Recipes change, so check your package, and use a custom food for anything missing. Restaurant items use each chain&rsquo;s published numbers for one item, so log them by count. Fiber counts as 0 where a chain does not list it. Your log is private to you: it saves to your Claude account when you are signed in, and to this browser otherwise. Cutline is not medical advice.<\/div><\/details>';
 
     return html;
   }
@@ -1226,7 +1229,7 @@ body{background:#000;color:#fff}
     var box=$('pv'); if(!box) return;
     var fq=($('f-food')||{}).value||'', aq=($('f-amt')||{}).value||'';
     if(!fq.trim()){
-      box.innerHTML='<div class="pv-hint">Type a food and an amount, like <b>chicken breast<\/b> and <b>179<\/b>, then press Enter to log it. Eggs and similar foods accept counts, like <b>4<\/b> or <b>4x<\/b>.<\/div>';
+      box.innerHTML='';
       return;
     }
     var m=findFoods(fq);
